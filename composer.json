@@ -1,0 +1,21 @@
+{
+    "name": "sergeynezbritskiy/xml-io",
+    "description": "Library for parsing and generating XML",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Nezbritskiy",
+            "email": "sergey.nezbritskiy@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "SergeyNezbritskiy\\XmlIo\\": "src/"
+        }
+    }
+}
