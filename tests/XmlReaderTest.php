@@ -67,4 +67,19 @@ class XmlReaderTest extends TestCase
             'age' => 29
         ], $result);
     }
+
+    public function testInvalidMap()
+    {
+        $map = [
+            'id' => '@not_existing_attribute',
+            'name' => 'not_existing_element',
+        ];
+        $xmlReader = new XmlReader();
+        $result = $xmlReader->parseFile(__DIR__ . '/data/sample_item.xml', $map);
+        $this->assertEquals([
+            'id' => '',
+            'name' => '',
+        ], $result);
+    }
+
 }
