@@ -36,6 +36,7 @@ class XmlReader
         $result = [];
         $xml = simplexml_load_string($xml);
         foreach ($map as $mapKey => $mapData) {
+            $mapKey = (string)$mapKey;
             if ($this->isArray($mapKey)) {
                 $mapKey = substr($mapKey, 0, -2);
                 $this->appendArray($result, $xml, $mapKey, $mapData);
@@ -106,7 +107,7 @@ class XmlReader
      * @param string $key
      * @return bool
      */
-    private function isArray(string $key): bool
+    private function isArray($key): bool
     {
         return is_array($key) || (substr($key, -2) === '[]');
     }

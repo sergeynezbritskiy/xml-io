@@ -52,4 +52,19 @@ class XmlReaderTest extends TestCase
         ], $result);
     }
 
+    public function testParseXmlIntoItem()
+    {
+        $map = [
+            'id' => '@id',
+            'name' => 'name',
+            'age' => 'age',
+        ];
+        $xmlReader = new XmlReader();
+        $result = $xmlReader->parseFile(__DIR__ . '/data/sample_item.xml', $map);
+        $this->assertEquals([
+            'id' => 1,
+            'name' => 'Sergey',
+            'age' => 29
+        ], $result);
+    }
 }
