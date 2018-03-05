@@ -46,10 +46,10 @@ class XmlReaderTest extends TestCase
 
         $xmlReader = new XmlReader();
         $result = $xmlReader->parse($content, $map);
-        $this->assertEquals(['user' => [
+        $this->assertEquals([
             ['id' => '1', 'name' => 'Sergey', 'age' => 29],
             ['id' => '2', 'name' => 'Victoria', 'age' => 22],
-        ]], $result);
+        ], $result);
     }
 
 }
