@@ -35,7 +35,7 @@ class XmlReaderTest extends TestCase
 
     public function testParseXmlIntoArray()
     {
-        $content = file_get_contents(__DIR__ . '/data/sample.xml');
+        $content = file_get_contents(__DIR__ . '/data/sample_list.xml');
         $map = [
             'user[]' => [
                 'id' => '@id',

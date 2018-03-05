@@ -37,6 +37,7 @@ class XmlReader
         $xml = simplexml_load_string($xml);
         foreach ($map as $mapKey => $mapData) {
             if ($this->isArray($mapKey)) {
+                $mapKey = substr($mapKey, 0, -2);
                 $this->appendArray($result, $xml, $mapKey, $mapData);
             } elseif ($this->isArray($mapData)) {
                 $this->appendNodes($result, $xml, $mapKey, $mapData);
@@ -58,9 +59,12 @@ class XmlReader
     {
         foreach ($map as $mapKey => $mapData) {
             if ($this->isArray($mapKey)) {
-                $this->appendArray($result, $xml, $mapKey, $mapData);
+                $mapKey = substr($mapKey, 0, -2);
+                $result[$mapKey] = [];
+                $this->appendArray($result[$mapKey], $xml, $mapKey, $mapData);
             } elseif ($this->isArray($mapData)) {
-                $this->appendNodes($result, $xml, $key, $mapData);
+                $result[$key] = [];
+                $this->appendNodes($result[$key], $xml, $key, $mapData);
             } else {
                 $this->appendNode($result, $xml, $mapKey, $mapData);
             }
@@ -73,37 +77,28 @@ class XmlReader
      * @param string $key
      * @param array $map
      */
-    private function appendNode(array &$result, \SimpleXMLElement $xml, string $key, array $map)
+    private function appendArray(array &$result, \SimpleXMLElement $xml, string $key, array $map)
     {
-        if ($this->isArray($key)) {
-            $key = substr($key, 0, strlen($key) - 2);
-            $result[$key] = [];
-            $this->appendArray($result[$key], $xml, $key, $map);
-        } else {
-            foreach ($map as $key => $data) {
-                if (is_string($data) && $this->isAttribute($data)) {
-                    $data = substr($data, 1);
-                    $result[$key] = (string)$xml[$data];
-                } else {
-                    $result[$key] = (string)$xml->$data;
-                }
-            }
+        foreach ($xml->$key as $itemData) {
+            $item = [];
+            $this->appendNodes($item, $itemData, $key, $map);
+            $result[] = $item;
         }
     }
 
     /**
      * @param array $result
      * @param \SimpleXMLElement $xml
-     * @param string $key
-     * @param array $map
+     * @param string $arrayKey
+     * @param string $xmlKey
      */
-    private function appendArray(array &$result, \SimpleXMLElement $xml, string $key, array $map)
+    private function appendNode(array &$result, \SimpleXMLElement $xml, string $arrayKey, string $xmlKey)
     {
-        $key = substr($key, 0, -2);
-        foreach ($xml->$key as $itemData) {
-            $item = [];
-            $this->appendNode($item, $itemData, $key, $map);
-            $result[] = $item;
+        if ($this->isAttribute($xmlKey)) {
+            $data = substr($xmlKey, 1);
+            $result[$arrayKey] = (string)$xml[$data];
+        } else {
+            $result[$arrayKey] = (string)$xml->$xmlKey;
         }
     }
 
