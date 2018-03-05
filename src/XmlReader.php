@@ -59,6 +59,7 @@ class XmlReader
     private function appendNodes(array &$result, \SimpleXMLElement $xml, string $key, array $map)
     {
         foreach ($map as $mapKey => $mapData) {
+            $mapKey = (string)$mapKey;
             if ($this->isArray($mapKey)) {
                 $mapKey = substr($mapKey, 0, -2);
                 $result[$mapKey] = [];
@@ -104,6 +105,8 @@ class XmlReader
     }
 
     /**
+     * Returns true either $key is array or is string with suffix `[]`
+     *
      * @param string $key
      * @return bool
      */
@@ -113,6 +116,9 @@ class XmlReader
     }
 
     /**
+     * Returns true if $key starts with `@` which means
+     * that xml element attribute requested
+     *
      * @param string $key
      * @return bool
      */
