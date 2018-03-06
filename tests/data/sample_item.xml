@@ -3,4 +3,19 @@
     <name>Sergey</name>
     <age>29</age>
     <gender>male</gender>
+    <keywords>
+        <keyword>buono</keyword>
+        <keyword>brutto</keyword>
+        <keyword>cattivo</keyword>
+    </keywords>
+    <addresses>
+        <address>
+            <city>Kharkiv</city>
+            <country>Ukraine</country>
+        </address>
+        <address>
+            <city>London</city>
+            <country>Great Britain</country>
+        </address>
+    </addresses>
 </user>
