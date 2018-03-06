@@ -46,6 +46,13 @@ class XmlReader
     public function parse(SimpleXMLElement $xml, $map): array
     {
         $result = [];
+        foreach ($map as $arrayKey => $xmlKey) {
+            if ($this->isArray($arrayKey)) {
+            } elseif ($this->isArray($xmlKey)) {
+            } else {
+                $result[$arrayKey] = (string)$this->getNode($xml, $xmlKey);
+            }
+        }
         return $result;
     }
 

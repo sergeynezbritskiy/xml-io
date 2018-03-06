@@ -40,6 +40,9 @@ class XmlReaderTest extends TestCase
         $this->assertXmlEquals('sample_item.xml', [
             'id' => '@id',
             'name' => 'name',
+        ], [
+            'id' => '11235813',
+            'name' => 'Sergey'
         ]);
     }
 
