@@ -86,7 +86,7 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
-    public function testlistArray()
+    public function testListArray()
     {
         $this->assertXmlEquals('sample_item.xml', [
             'id' => '@id',
