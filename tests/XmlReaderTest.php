@@ -77,19 +77,19 @@ class XmlReaderTest extends TestCase
 
     public function testIsAttribute()
     {
-        $this->assertTrue($this->invokeMethod('isAttribute', ['key' => '@attribute']));
-        $this->assertFalse($this->invokeMethod('isAttribute', ['key' => 'tag']));
-        $this->assertFalse($this->invokeMethod('isAttribute', ['key' => 'tag@']));
+        $this->assertTrue($this->call('isAttribute', ['key' => '@attribute']));
+        $this->assertFalse($this->call('isAttribute', ['key' => 'tag']));
+        $this->assertFalse($this->call('isAttribute', ['key' => 'tag@']));
     }
 
     public function testIsArray()
     {
-        $this->assertTrue($this->invokeMethod('isArray', ['key' => 'users[]']));
-        $this->assertTrue($this->invokeMethod('isArray', ['key' => []]));
-        $this->assertTrue($this->invokeMethod('isArray', ['key' => [1, 2, 3]]));
-        $this->assertFalse($this->invokeMethod('isArray', ['key' => 'users']));
-        $this->assertFalse($this->invokeMethod('isArray', ['key' => null]));
-        $this->assertFalse($this->invokeMethod('isArray', ['key' => 1]));
+        $this->assertTrue($this->call('isArray', ['key' => 'users[]']));
+        $this->assertTrue($this->call('isArray', ['key' => []]));
+        $this->assertTrue($this->call('isArray', ['key' => [1, 2, 3]]));
+        $this->assertFalse($this->call('isArray', ['key' => 'users']));
+        $this->assertFalse($this->call('isArray', ['key' => null]));
+        $this->assertFalse($this->call('isArray', ['key' => 1]));
     }
 
     /**
@@ -100,7 +100,7 @@ class XmlReaderTest extends TestCase
     private function assertNodeEquals($key, $expectedResult)
     {
         $xml = simplexml_load_string(file_get_contents(__DIR__ . '/data/sample_item.xml'));
-        $this->assertEquals($expectedResult, (string)$this->invokeMethod('getNode', [
+        $this->assertEquals($expectedResult, (string)$this->call('getNode', [
             'xml' => $xml,
             'key' => $key,
         ]));
@@ -126,7 +126,7 @@ class XmlReaderTest extends TestCase
      * @return mixed Method return.
      * @throws \ReflectionException
      */
-    private function invokeMethod($methodName, array $params = [])
+    private function call($methodName, array $params = [])
     {
 
         $reflection = new \ReflectionClass(get_class($this->xmlReader));
