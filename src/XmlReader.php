@@ -12,11 +12,10 @@ class XmlReader
 {
 
     /**
-     * XmlReader constructor.
+     * This is a key for defining non associative arrays
+     * Can be used as in keys as in values
      */
-    public function __construct()
-    {
-    }
+    const KEY_LIST = '{list}';
 
     /**
      * @param string $filePath
@@ -63,7 +62,7 @@ class XmlReader
                     $result[$currentArrayKey] = $currentArray;
                 }
 
-            } elseif ($xmlKey === '{list}') {
+            } elseif ($xmlKey === self::KEY_LIST) {
 
                 $result[$currentArrayKey] = (array)$this->getNode($xml, $currentXmlKey);
 
@@ -94,7 +93,7 @@ class XmlReader
         if (count($keyParts) !== 2) {
             $keyParts = [$key, $key];
         }
-        if ($keyParts[0] === '{list}') {
+        if ($keyParts[0] === self::KEY_LIST) {
             $keyParts[0] = null;
         }
         return $keyParts;
