@@ -59,6 +59,22 @@ class XmlReader
     }
 
     /**
+     * @param string $key
+     * @return array
+     */
+    private function parseKey(string $key): array
+    {
+        $keyParts = explode(' as ', $key);
+        if (count($keyParts) !== 2) {
+            $keyParts = [$key, $key];
+        }
+        if ($keyParts[0] === '{assoc}') {
+            $keyParts[0] = null;
+        }
+        return $keyParts;
+    }
+
+    /**
      * @param SimpleXMLElement $xml
      * @param string $key
      * @return SimpleXMLElement
