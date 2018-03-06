@@ -50,6 +50,25 @@ class XmlReaderAdvanced
     }
 
     /**
+     * @param SimpleXMLElement $xml
+     * @param string $key
+     * @return SimpleXMLElement
+     */
+    private function getNode(SimpleXMLElement $xml, string $key): SimpleXMLElement
+    {
+        $key = explode('.', $key);
+        foreach ($key as $level) {
+            if ($this->isAttribute($level)) {
+                $level = substr($level, 1);
+                $xml = $xml[$level];
+            } else {
+                $xml = $xml->$level;
+            }
+        }
+        return $xml;
+    }
+
+    /**
      * Returns true either $key is array or is string with suffix `[]`
      *
      * @param string $key

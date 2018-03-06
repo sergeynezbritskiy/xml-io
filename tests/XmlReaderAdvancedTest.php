@@ -34,6 +34,25 @@ class XmlReaderAdvancedTest extends TestCase
     }
 
     //tests
+    public function testGetNodeWithSingleLevel()
+    {
+        $this->assertNodeEquals('name', 'Sergey');
+    }
+
+    public function testGetNodeWithNestedLevels()
+    {
+        $this->assertNodeEquals('passport.date', '2000-12-12');
+    }
+
+    public function testGetAttribute()
+    {
+        $this->assertNodeEquals('@id', '11235813');
+    }
+
+    public function testGetAttributeFromNestedLevel()
+    {
+        $this->assertNodeEquals('passport.@id', 'MN123456');
+    }
 
     public function testIsAttribute()
     {
@@ -50,6 +69,15 @@ class XmlReaderAdvancedTest extends TestCase
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 'users']));
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => null]));
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 1]));
+    }
+
+    private function assertNodeEquals($key, $expectedResult)
+    {
+        $xml = simplexml_load_string(file_get_contents(__DIR__ . '/data/sample_item.xml'));
+        $this->assertEquals($expectedResult, (string)$this->invokeMethod($this->xmlReader, 'getNode', [
+            'xml' => $xml,
+            'key' => $key,
+        ]));
     }
 
     /**
