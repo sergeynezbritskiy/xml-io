@@ -62,7 +62,7 @@ class XmlReaderTest extends TestCase
         $xmlReader = new XmlReader();
         $result = $xmlReader->parseFile(__DIR__ . '/data/sample_item.xml', $map);
         $this->assertEquals([
-            'id' => 1,
+            'id' => 11235813,
             'name' => 'Sergey',
             'age' => 29
         ], $result);
