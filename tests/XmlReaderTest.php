@@ -77,19 +77,19 @@ class XmlReaderTest extends TestCase
 
     public function testIsAttribute()
     {
-        $this->assertTrue($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => '@attribute']));
-        $this->assertFalse($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => 'tag']));
-        $this->assertFalse($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => 'tag@']));
+        $this->assertTrue($this->invokeMethod('isAttribute', ['key' => '@attribute']));
+        $this->assertFalse($this->invokeMethod('isAttribute', ['key' => 'tag']));
+        $this->assertFalse($this->invokeMethod('isAttribute', ['key' => 'tag@']));
     }
 
     public function testIsArray()
     {
-        $this->assertTrue($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 'users[]']));
-        $this->assertTrue($this->invokeMethod($this->xmlReader, 'isArray', ['key' => []]));
-        $this->assertTrue($this->invokeMethod($this->xmlReader, 'isArray', ['key' => [1, 2, 3]]));
-        $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 'users']));
-        $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => null]));
-        $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 1]));
+        $this->assertTrue($this->invokeMethod('isArray', ['key' => 'users[]']));
+        $this->assertTrue($this->invokeMethod('isArray', ['key' => []]));
+        $this->assertTrue($this->invokeMethod('isArray', ['key' => [1, 2, 3]]));
+        $this->assertFalse($this->invokeMethod('isArray', ['key' => 'users']));
+        $this->assertFalse($this->invokeMethod('isArray', ['key' => null]));
+        $this->assertFalse($this->invokeMethod('isArray', ['key' => 1]));
     }
 
     /**
@@ -100,7 +100,7 @@ class XmlReaderTest extends TestCase
     private function assertNodeEquals($key, $expectedResult)
     {
         $xml = simplexml_load_string(file_get_contents(__DIR__ . '/data/sample_item.xml'));
-        $this->assertEquals($expectedResult, (string)$this->invokeMethod($this->xmlReader, 'getNode', [
+        $this->assertEquals($expectedResult, (string)$this->invokeMethod('getNode', [
             'xml' => $xml,
             'key' => $key,
         ]));
@@ -120,19 +120,19 @@ class XmlReaderTest extends TestCase
     /**
      * Call protected/private method of a class.
      *
-     * @param object &$object Instantiated object that we will run method on.
      * @param string $methodName Method name to call
      * @param array $params Array of parameters to pass into method.
      *
      * @return mixed Method return.
      * @throws \ReflectionException
      */
-    private function invokeMethod(&$object, $methodName, array $params = [])
+    private function invokeMethod($methodName, array $params = [])
     {
-        $reflection = new \ReflectionClass(get_class($object));
+
+        $reflection = new \ReflectionClass(get_class($this->xmlReader));
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
-
-        return $method->invokeArgs($object, $params);
+        return $method->invokeArgs($this->xmlReader, $params);
     }
+
 }
