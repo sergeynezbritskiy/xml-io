@@ -67,12 +67,86 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
+    public function testNestedArray()
+    {
+        $this->assertXmlEquals('sample_item.xml', [
+            'id' => '@id',
+            'name' => 'name',
+            'addresses as addresses.address[]' => [
+                'city' => 'city',
+                'country' => 'country',
+            ]
+        ], [
+            'id' => '11235813',
+            'name' => 'Sergey',
+            'addresses' => [
+                ['city' => 'Kharkiv', 'country' => 'Ukraine'],
+                ['city' => 'London', 'country' => 'Great Britain'],
+            ]
+        ]);
+    }
+
+    public function testAssocArray()
+    {
+        $this->assertXmlEquals('sample_item.xml', [
+            'id' => '@id',
+            'name' => 'name',
+            'keywords as keywords.keyword' => '{list}'
+        ], [
+            'id' => '11235813',
+            'name' => 'Sergey',
+            'keywords' => [
+                'buono',
+                'brutto',
+                'cattivo',
+            ]
+        ]);
+    }
+
+    public function testFullComplexData()
+    {
+        $this->assertXmlEquals('sample_item.xml', [
+            'id' => '@id',
+            'name' => 'name',
+            'age' => 'age',
+            'born' => 'born',
+            'born_format' => 'born.@format',
+            'passport' => [
+                'id' => '@id',
+                'date' => 'date',
+                'issued' => 'issued',
+            ],
+            'keywords as keywords.keyword' => '{list}',
+            'addresses as addresses.address[]' => [
+                'city' => 'city',
+                'country' => 'country',
+            ]
+        ], [
+            'id' => '11235813',
+            'name' => 'Sergey',
+            'age' => '29',
+            'born' => '1988-20-12',
+            'born_format' => 'ISO',
+            'passport' => [
+                'id' => 'MN123456',
+                'date' => '2000-12-12',
+                'issued' => 'organization title',
+            ],
+            'keywords' => ['buono', 'brutto', 'cattivo'],
+            'addresses' => [
+                ['city' => 'Kharkiv', 'country' => 'Ukraine'],
+                ['city' => 'London', 'country' => 'Great Britain'],
+            ]
+        ]);
+    }
+
     public function testParseKey()
     {
         $this->assertEquals(['user', 'user'], $this->call('parseKey', ['key' => 'user']));
+        $this->assertEquals(['users', 'users'], $this->call('parseKey', ['users[]']));
         $this->assertEquals(['document', 'passport'], $this->call('parseKey', ['key' => 'document as passport']));
-        $this->assertEquals(['users', 'user[]'], $this->call('parseKey', ['key' => 'users as user[]']));
-        $this->assertEquals([null, 'user[]'], $this->call('parseKey', ['key' => '{assoc} as user[]']));
+        $this->assertEquals(['users', 'user'], $this->call('parseKey', ['key' => 'users as user[]']));
+        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{assoc} as user[]']));
     }
 
     public function testGetAttribute()

@@ -47,12 +47,31 @@ class XmlReader
     {
         $result = [];
         foreach ($map as $arrayKey => $xmlKey) {
+
+            list($currentArrayKey, $currentXmlKey) = $this->parseKey($arrayKey);
+
             if ($this->isArray($arrayKey)) {
+
+                $currentArray = [];
+                $currentNode = $this->getNode($xml, $currentXmlKey);
+                foreach ($currentNode as $xml) {
+                    $currentArray[] = $this->parse($xml, $xmlKey);
+                }
+                $result[$currentArrayKey] = $currentArray;
+
+            } elseif ($xmlKey === '{list}') {
+
+                $result[$currentArrayKey] = (array)$this->getNode($xml, $currentXmlKey);
+
             } elseif ($this->isArray($xmlKey)) {
-                $childXml = $this->getNode($xml, $arrayKey);
-                $result[$arrayKey] = $this->parse($childXml, $xmlKey);
+
+                $childXml = $this->getNode($xml, $currentXmlKey);
+                $result[$currentArrayKey] = $this->parse($childXml, $xmlKey);
+
             } else {
-                $result[$arrayKey] = (string)$this->getNode($xml, $xmlKey);
+
+                $result[$currentArrayKey] = (string)$this->getNode($xml, $xmlKey);
+
             }
         }
         return $result;
@@ -64,6 +83,9 @@ class XmlReader
      */
     private function parseKey(string $key): array
     {
+        if (substr($key, -2) === '[]') {
+            $key = substr($key, 0, -2);
+        }
         $keyParts = explode(' as ', $key);
         if (count($keyParts) !== 2) {
             $keyParts = [$key, $key];
