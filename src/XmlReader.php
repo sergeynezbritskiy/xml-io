@@ -49,6 +49,8 @@ class XmlReader
         foreach ($map as $arrayKey => $xmlKey) {
             if ($this->isArray($arrayKey)) {
             } elseif ($this->isArray($xmlKey)) {
+                $childXml = $this->getNode($xml, $arrayKey);
+                $result[$arrayKey] = $this->parse($childXml, $xmlKey);
             } else {
                 $result[$arrayKey] = (string)$this->getNode($xml, $xmlKey);
             }

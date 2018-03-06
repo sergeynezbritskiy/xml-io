@@ -6,7 +6,7 @@
     <gender>male</gender>
     <passport id="MN123456">
         <date>2000-12-12</date>
-        <issued>[[<![CDATA[organisation title]]></issued>
+        <issued><![CDATA[organization title]]></issued>
     </passport>
     <keywords>
         <keyword>buono</keyword>

@@ -46,6 +46,27 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
+    public function testComplexType()
+    {
+        $this->assertXmlEquals('sample_item.xml', [
+            'id' => '@id',
+            'name' => 'name',
+            'passport' => [
+                'id' => '@id',
+                'date' => 'date',
+                'issued' => 'issued',
+            ]
+        ], [
+            'id' => '11235813',
+            'name' => 'Sergey',
+            'passport' => [
+                'id' => 'MN123456',
+                'date' => '2000-12-12',
+                'issued' => 'organization title',
+            ]
+        ]);
+    }
+
     public function testGetAttribute()
     {
         $this->assertNodeEquals('name', 'Sergey');
