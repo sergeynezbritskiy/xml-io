@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<user id="1">
+<user id="11235813">
     <name>Sergey</name>
     <age>29</age>
+    <born format="ISO">1988-20-12</born>
     <gender>male</gender>
+    <passport id="MN123456">
+        <date>2000-12-12</date>
+        <issued><![CDATA[organization title]]></issued>
+    </passport>
+    <keywords>
+        <keyword>buono</keyword>
+        <keyword>brutto</keyword>
+        <keyword>cattivo</keyword>
+    </keywords>
+    <addresses>
+        <address>
+            <city>Kharkiv</city>
+            <country>Ukraine</country>
+        </address>
+        <address>
+            <city>London</city>
+            <country>Great Britain</country>
+        </address>
+    </addresses>
 </user>

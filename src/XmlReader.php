@@ -2,6 +2,8 @@
 
 namespace SergeyNezbritskiy\XmlIo;
 
+use SimpleXMLElement;
+
 /**
  * Class XmlReader
  * @package SergeyNezbritskiy\XmlIo
@@ -10,11 +12,10 @@ class XmlReader
 {
 
     /**
-     * XmlReader constructor.
+     * This is a key for defining non associative arrays
+     * Can be used as in keys as in values
      */
-    public function __construct()
-    {
-    }
+    const KEY_LIST = '{list}';
 
     /**
      * @param string $filePath
@@ -23,7 +24,7 @@ class XmlReader
      */
     public function parseFile(string $filePath, array $map): array
     {
-        return $this->parse(file_get_contents($filePath), $map);
+        return $this->parseString(file_get_contents($filePath), $map);
     }
 
     /**
@@ -31,77 +32,90 @@ class XmlReader
      * @param array $map
      * @return array
      */
-    public function parse(string $xml, array $map): array
+    public function parseString(string $xml, array $map): array
+    {
+        return $this->parse(simplexml_load_string($xml), $map);
+    }
+
+    /**
+     * @param SimpleXMLElement $xml
+     * @param $map
+     * @return array
+     */
+    public function parse(SimpleXMLElement $xml, $map): array
     {
         $result = [];
-        $xml = simplexml_load_string($xml);
-        foreach ($map as $mapKey => $mapData) {
-            $mapKey = (string)$mapKey;
-            if ($this->isArray($mapKey)) {
-                $mapKey = substr($mapKey, 0, -2);
-                $this->appendArray($result, $xml, $mapKey, $mapData);
-            } elseif ($this->isArray($mapData)) {
-                $this->appendNodes($result, $xml, $mapKey, $mapData);
+        foreach ($map as $arrayKey => $xmlKey) {
+
+            list($currentArrayKey, $currentXmlKey) = $this->parseKey($arrayKey);
+
+            if ($this->isArray($arrayKey)) {
+
+                $currentArray = [];
+                $currentNode = $this->getNode($xml, $currentXmlKey);
+                foreach ($currentNode as $xml) {
+                    $currentArray[] = $this->parse($xml, $xmlKey);
+                }
+                if ($currentArrayKey === null) {
+                    $result = array_merge($result, $currentArray);
+                } else {
+                    $result[$currentArrayKey] = $currentArray;
+                }
+
+            } elseif ($xmlKey === self::KEY_LIST) {
+
+                $result[$currentArrayKey] = (array)$this->getNode($xml, $currentXmlKey);
+
+            } elseif ($this->isArray($xmlKey)) {
+
+                $childXml = $this->getNode($xml, $currentXmlKey);
+                $result[$currentArrayKey] = $this->parse($childXml, $xmlKey);
+
             } else {
-                $this->appendNode($result, $xml, $mapKey, $mapData);
+
+                $result[$currentArrayKey] = (string)$this->getNode($xml, $xmlKey);
+
             }
         }
         return $result;
-
     }
 
     /**
-     * @param array $result
-     * @param \SimpleXMLElement $xml
      * @param string $key
-     * @param array $map
+     * @return array
      */
-    private function appendNodes(array &$result, \SimpleXMLElement $xml, string $key, array $map)
+    private function parseKey(string $key): array
     {
-        foreach ($map as $mapKey => $mapData) {
-            $mapKey = (string)$mapKey;
-            if ($this->isArray($mapKey)) {
-                $mapKey = substr($mapKey, 0, -2);
-                $result[$mapKey] = [];
-                $this->appendArray($result[$mapKey], $xml, $mapKey, $mapData);
-            } elseif ($this->isArray($mapData)) {
-                $result[$key] = [];
-                $this->appendNodes($result[$key], $xml, $key, $mapData);
+        if (substr($key, -2) === '[]') {
+            $key = substr($key, 0, -2);
+        }
+        $keyParts = explode(' as ', $key);
+        if (count($keyParts) !== 2) {
+            $keyParts = [$key, $key];
+        }
+        if ($keyParts[0] === self::KEY_LIST) {
+            $keyParts[0] = null;
+        }
+        return $keyParts;
+    }
+
+    /**
+     * @param SimpleXMLElement $xml
+     * @param string $key
+     * @return SimpleXMLElement
+     */
+    private function getNode(SimpleXMLElement $xml, string $key): SimpleXMLElement
+    {
+        $key = explode('.', $key);
+        foreach ($key as $level) {
+            if ($this->isAttribute($level)) {
+                $level = substr($level, 1);
+                $xml = $xml[$level];
             } else {
-                $this->appendNode($result, $xml, $mapKey, $mapData);
+                $xml = $xml->$level;
             }
         }
-    }
-
-    /**
-     * @param array $result
-     * @param \SimpleXMLElement $xml
-     * @param string $key
-     * @param array $map
-     */
-    private function appendArray(array &$result, \SimpleXMLElement $xml, string $key, array $map)
-    {
-        foreach ($xml->$key as $itemData) {
-            $item = [];
-            $this->appendNodes($item, $itemData, $key, $map);
-            $result[] = $item;
-        }
-    }
-
-    /**
-     * @param array $result
-     * @param \SimpleXMLElement $xml
-     * @param string $arrayKey
-     * @param string $xmlKey
-     */
-    private function appendNode(array &$result, \SimpleXMLElement $xml, string $arrayKey, string $xmlKey)
-    {
-        if ($this->isAttribute($xmlKey)) {
-            $data = substr($xmlKey, 1);
-            $result[$arrayKey] = (string)$xml[$data];
-        } else {
-            $result[$arrayKey] = (string)$xml->$xmlKey;
-        }
+        return $xml;
     }
 
     /**
@@ -112,7 +126,7 @@ class XmlReader
      */
     private function isArray($key): bool
     {
-        return is_array($key) || (substr($key, -2) === '[]');
+        return is_array($key) || (substr((string)$key, -2) === '[]');
     }
 
     /**
