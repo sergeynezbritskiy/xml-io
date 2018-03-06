@@ -3,17 +3,17 @@
 namespace SergeyNezbritskiy\XmlIo\tests;
 
 use PHPUnit\Framework\TestCase;
-use SergeyNezbritskiy\XmlIo\XmlReaderAdvanced;
+use SergeyNezbritskiy\XmlIo\XmlReader;
 
 /**
  * Class XmlReaderAdvancedTest
  * @package SergeyNezbritskiy\XmlIo\tests
  */
-class XmlReaderAdvancedTest extends TestCase
+class XmlReaderTest extends TestCase
 {
 
     /**
-     * @var XmlReaderAdvanced
+     * @var XmlReader
      */
     private $xmlReader;
 
@@ -22,7 +22,7 @@ class XmlReaderAdvancedTest extends TestCase
      */
     protected function setUp()
     {
-        $this->xmlReader = new XmlReaderAdvanced();
+        $this->xmlReader = new XmlReader();
     }
 
     /**
@@ -34,26 +34,42 @@ class XmlReaderAdvancedTest extends TestCase
     }
 
     //tests
+
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetNodeWithSingleLevel()
     {
         $this->assertNodeEquals('name', 'Sergey');
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetNodeWithNestedLevels()
     {
         $this->assertNodeEquals('passport.date', '2000-12-12');
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetAttribute()
     {
         $this->assertNodeEquals('@id', '11235813');
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetAttributeFromNestedLevel()
     {
         $this->assertNodeEquals('passport.@id', 'MN123456');
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testIsAttribute()
     {
         $this->assertTrue($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => '@attribute']));
@@ -61,6 +77,9 @@ class XmlReaderAdvancedTest extends TestCase
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => 'tag@']));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testIsArray()
     {
         $this->assertTrue($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 'users[]']));
@@ -71,6 +90,11 @@ class XmlReaderAdvancedTest extends TestCase
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 1]));
     }
 
+    /**
+     * @param $key
+     * @param $expectedResult
+     * @throws \ReflectionException
+     */
     private function assertNodeEquals($key, $expectedResult)
     {
         $xml = simplexml_load_string(file_get_contents(__DIR__ . '/data/sample_item.xml'));
@@ -99,6 +123,7 @@ class XmlReaderAdvancedTest extends TestCase
      * @param array $params Array of parameters to pass into method.
      *
      * @return mixed Method return.
+     * @throws \ReflectionException
      */
     private function invokeMethod(&$object, $methodName, array $params = [])
     {

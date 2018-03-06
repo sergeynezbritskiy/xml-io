@@ -5,10 +5,10 @@ namespace SergeyNezbritskiy\XmlIo;
 use SimpleXMLElement;
 
 /**
- * Class XmlReaderAdvanced
+ * Class XmlReader
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlReaderAdvanced
+class XmlReader
 {
 
     /**
