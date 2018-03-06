@@ -9,7 +9,10 @@
             "email": "sergey.nezbritskiy@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": "^7.0",
+        "ext-simplexml": "*"
+    },
     "require-dev": {
         "phpunit/phpunit": "^6.5"
     },
