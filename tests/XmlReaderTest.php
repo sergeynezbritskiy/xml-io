@@ -86,7 +86,7 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
-    public function testAssocArray()
+    public function testlistArray()
     {
         $this->assertXmlEquals('sample_item.xml', [
             'id' => '@id',
@@ -140,13 +140,43 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
+    public function testArrayOfEntities()
+    {
+        $this->assertXmlEquals('sample_list.xml', [
+            'users as user[]' => [
+                'id' => '@id',
+                'name' => 'name',
+                'age' => 'age',
+            ]
+        ], [
+            'users' => [
+                ['id' => '1', 'name' => 'Sergey', 'age' => '29'],
+                ['id' => '2', 'name' => 'Victoria', 'age' => '22'],
+            ]
+        ]);
+    }
+
+    public function testListWithEmptyKey()
+    {
+        $this->assertXmlEquals('sample_list.xml', [
+            '{list} as user[]' => [
+                'id' => '@id',
+                'name' => 'name',
+                'age' => 'age',
+            ]
+        ], [
+            ['id' => '1', 'name' => 'Sergey', 'age' => '29'],
+            ['id' => '2', 'name' => 'Victoria', 'age' => '22'],
+        ]);
+    }
+
     public function testParseKey()
     {
         $this->assertEquals(['user', 'user'], $this->call('parseKey', ['key' => 'user']));
         $this->assertEquals(['users', 'users'], $this->call('parseKey', ['users[]']));
         $this->assertEquals(['document', 'passport'], $this->call('parseKey', ['key' => 'document as passport']));
         $this->assertEquals(['users', 'user'], $this->call('parseKey', ['key' => 'users as user[]']));
-        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{assoc} as user[]']));
+        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{list} as user[]']));
     }
 
     public function testGetAttribute()

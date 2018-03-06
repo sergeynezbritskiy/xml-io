@@ -57,7 +57,11 @@ class XmlReader
                 foreach ($currentNode as $xml) {
                     $currentArray[] = $this->parse($xml, $xmlKey);
                 }
-                $result[$currentArrayKey] = $currentArray;
+                if ($currentArrayKey === null) {
+                    $result = array_merge($result, $currentArray);
+                } else {
+                    $result[$currentArrayKey] = $currentArray;
+                }
 
             } elseif ($xmlKey === '{list}') {
 
@@ -90,7 +94,7 @@ class XmlReader
         if (count($keyParts) !== 2) {
             $keyParts = [$key, $key];
         }
-        if ($keyParts[0] === '{assoc}') {
+        if ($keyParts[0] === '{list}') {
             $keyParts[0] = null;
         }
         return $keyParts;
