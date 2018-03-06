@@ -35,41 +35,22 @@ class XmlReaderTest extends TestCase
 
     //tests
 
-    /**
-     * @throws \ReflectionException
-     */
-    public function testGetNodeWithSingleLevel()
+    public function testParseSimpleXmlString()
     {
-        $this->assertNodeEquals('name', 'Sergey');
+        $this->assertXmlEquals('sample_item.xml', [
+            'id' => '@id',
+            'name' => 'name',
+        ]);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    public function testGetNodeWithNestedLevels()
-    {
-        $this->assertNodeEquals('passport.date', '2000-12-12');
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
     public function testGetAttribute()
     {
+        $this->assertNodeEquals('name', 'Sergey');
+        $this->assertNodeEquals('passport.date', '2000-12-12');
         $this->assertNodeEquals('@id', '11235813');
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testGetAttributeFromNestedLevel()
-    {
         $this->assertNodeEquals('passport.@id', 'MN123456');
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testIsAttribute()
     {
         $this->assertTrue($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => '@attribute']));
@@ -77,9 +58,6 @@ class XmlReaderTest extends TestCase
         $this->assertFalse($this->invokeMethod($this->xmlReader, 'isAttribute', ['key' => 'tag@']));
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testIsArray()
     {
         $this->assertTrue($this->invokeMethod($this->xmlReader, 'isArray', ['key' => 'users[]']));
