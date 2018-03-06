@@ -14,12 +14,9 @@ Here is the most generic example. Lets pretend we have such xml as below
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <user id="1">
     <name>Sergey</name>
-    <age>29</age>
     <born format="ISO">1988-20-12</born>
-    <gender>male</gender>
     <passport id="MN123456">
         <date>2000-12-12</date>
-        <issued><![CDATA[organization title]]></issued>
     </passport>
     <keywords>
         <keyword>buono</keyword>
@@ -48,13 +45,11 @@ $result = $xmlReader->parseString($xmlString, [
     'id' => '@id',
     //array element with key `name` will be created from tag `name`
     'name' => 'name',
-    'age' => 'age',
     'born' => 'born',
     'born_format' => 'born.@format',
     'passport' => [
         'id' => '@id',
         'date' => 'date',
-        'issued' => 'issued',
     ],
     //create simple list of items
     'keywords as keywords.keyword' => '{list}',
@@ -69,13 +64,11 @@ the result will be smth like that:
 $result = [
     'id' => '1',
     'name' => 'Sergey',
-    'age' => '29',
     'born' => '1988-20-12',
     'born_format' => 'ISO',
     'passport' => [
         'id' => 'MN123456',
         'date' => '2000-12-12',
-        'issued' => 'organization title',
     ],
     'keywords' => [
         'buono', 
@@ -95,5 +88,5 @@ $result = [
 */
 ```
 
-## inspiration
+## Inspiration
 Author was inspired for creating of this library by https://github.com/laravie/parser
