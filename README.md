@@ -1,6 +1,12 @@
 # xml-io
 Library for Parsing xml into php array using easy mapping. It allows you to parse simple data like strings and numbers, arrays or a list of items and complex data like objects. Also any combination of these data types is allowed.
 
+[![Build Status](https://travis-ci.org/sergeynezbritskiy/xml-io.svg?branch=master)](https://travis-ci.org/sergeynezbritskiy/xml-io)
+[![Latest Stable Version](https://poser.pugx.org/sergeynezbritskiy/xml-io/v/stable)](https://packagist.org/packages/sergeynezbritskiy/xml-io)
+[![Total Downloads](https://poser.pugx.org/sergeynezbritskiy/xml-io/downloads)](https://packagist.org/packages/sergeynezbritskiy/xml-io)
+[![Latest Unstable Version](https://poser.pugx.org/sergeynezbritskiy/xml-io/v/unstable)](https://packagist.org/packages/sergeynezbritskiy/xml-io)
+[![License](https://poser.pugx.org/sergeynezbritskiy/xml-io/license)](https://packagist.org/packages/sergeynezbritskiy/xml-io)
+
 ## Installation
 The easiest way to install module is using Composer
 ```
