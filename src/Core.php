@@ -6,7 +6,7 @@ namespace SergeyNezbritskiy\XmlIo;
  * Class Core
  * @package SergeyNezbritskiy\XmlIo
  */
-class Core
+abstract class Core
 {
 
     /**

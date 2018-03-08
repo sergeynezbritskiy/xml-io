@@ -23,7 +23,7 @@ class CoreTest extends TestCase
      */
     protected function setUp()
     {
-        $this->xmlReader = new Core();
+        $this->xmlReader = $this->getMockForAbstractClass(Core::class);
     }
 
     /**
