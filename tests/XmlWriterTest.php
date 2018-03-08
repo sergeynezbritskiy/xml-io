@@ -65,7 +65,6 @@ class XmlWriterTest extends TestCase
         $this->user = null;
     }
 
-    /*/
     //tests
     public function testEmptyMap()
     {
@@ -145,7 +144,6 @@ XML;
         ], $expectedResult);
 
     }
-//*/
 
     public function testList()
     {
@@ -161,9 +159,56 @@ XML;
 XML;
         $this->assertXmlEquals([
             'name' => 'name',
-            'keywords as keyword[]' => ['keyword']
+            'keywords as keyword[]' => 'keyword'
         ], $expectedResult);
 
+    }
+
+    public function fullTest()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">
+    <name>Sergey</name>
+    <age>29</age>
+    <gender>male</gender>
+    <passport id="MN123456">
+        <date>2000-12-20</date>
+        <issued>organisation title</issued>
+    </passport>
+    <keywords>
+        <keyword>buono</keyword>
+        <keyword>brutto</keyword>
+        <keyword>cattivo</keyword>
+    </keywords>
+    <addresses>
+        <address>
+            <city>Kharkiv</city>
+            <country>Ukraine</country>
+        </address>
+        <address>
+            <city>London</city>
+            <country>Great Britain</country>
+        </address>
+    </addresses>
+</user>
+XML;
+        $this->assertXmlEquals([
+            '@id' => 'id',
+            'name',
+            'age',
+            'gender',
+            'passport' => [
+                '@id' => 'id',
+                'date',
+                'issued',
+            ],
+            'keywords as keyword[]' => 'keyword',
+            'addresses as address[]' => [
+                'city',
+                'country',
+            ]
+
+        ], $expectedResult);
     }
 
     /**
