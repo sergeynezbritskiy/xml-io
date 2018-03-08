@@ -23,6 +23,11 @@ class XmlWriterTest extends TestCase
     private $user;
 
     /**
+     * @var array
+     */
+    private $users;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -53,6 +58,18 @@ class XmlWriterTest extends TestCase
                     'country' => 'Great Britain'
                 ]
             ]
+        ];
+        $this->users = [
+            [
+                'id' => 1,
+                'name' => 'Sergey',
+                'age' => 29,
+            ],
+            [
+                'id' => 2,
+                'name' => 'Victoria',
+                'age' => 23,
+            ],
         ];
     }
 
@@ -224,6 +241,31 @@ XML;
             'user_name' => 'name',
             'how_old_are_you' => 'age',
         ], $expectedResult);
+    }
+
+    public function testListOnTopLevel()
+    {
+        $this->markTestSkipped('Not supported yet');
+        $expectedResult = <<<XML
+<users>
+    <user id="1">
+        <name>Sergey</name>
+        <age>29</age>
+    </user>
+    <user id="2">
+        <name>Victoria</name>
+        <age>23</age>
+    </user>
+</users>
+XML;
+
+        $expectedResult = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . $expectedResult;
+        $actualResult = $this->xmlWriter->toXml($this->users, 'users as user[]', [
+            '@identifier' => 'id',
+            'user_name' => 'name',
+            'how_old_are_you' => 'age',
+        ]);
+        $this->assertXmlStringEqualsXmlString($expectedResult, $actualResult);
     }
 
     /**
