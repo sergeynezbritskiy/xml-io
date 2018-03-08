@@ -8,23 +8,17 @@ use SimpleXMLElement;
  * Class XmlReader
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlReader
+class XmlReader extends Core
 {
-
-    /**
-     * This is a key for defining non associative arrays
-     * Can be used as in keys as in values
-     */
-    const KEY_LIST = '{list}';
 
     /**
      * @param string $filePath
      * @param array $map
      * @return array
      */
-    public function parseFile(string $filePath, array $map): array
+    public function fileToArray(string $filePath, array $map): array
     {
-        return $this->parseString(file_get_contents($filePath), $map);
+        return $this->stringToArray(file_get_contents($filePath), $map);
     }
 
     /**
@@ -32,9 +26,9 @@ class XmlReader
      * @param array $map
      * @return array
      */
-    public function parseString(string $xml, array $map): array
+    public function stringToArray(string $xml, array $map): array
     {
-        return $this->parse(simplexml_load_string($xml), $map);
+        return $this->xmlToArray(simplexml_load_string($xml), $map);
     }
 
     /**
@@ -42,7 +36,7 @@ class XmlReader
      * @param $map
      * @return array
      */
-    public function parse(SimpleXMLElement $xml, $map): array
+    public function xmlToArray(SimpleXMLElement $xml, $map): array
     {
         $result = [];
         foreach ($map as $arrayKey => $xmlKey) {
@@ -54,7 +48,7 @@ class XmlReader
                 $currentArray = [];
                 $currentNode = $this->getNode($xml, $currentXmlKey);
                 foreach ($currentNode as $xml) {
-                    $currentArray[] = $this->parse($xml, $xmlKey);
+                    $currentArray[] = $this->xmlToArray($xml, $xmlKey);
                 }
                 if ($currentArrayKey === null) {
                     $result = array_merge($result, $currentArray);
@@ -69,7 +63,7 @@ class XmlReader
             } elseif ($this->isArray($xmlKey)) {
 
                 $childXml = $this->getNode($xml, $currentXmlKey);
-                $result[$currentArrayKey] = $this->parse($childXml, $xmlKey);
+                $result[$currentArrayKey] = $this->xmlToArray($childXml, $xmlKey);
 
             } else {
 
@@ -78,25 +72,6 @@ class XmlReader
             }
         }
         return $result;
-    }
-
-    /**
-     * @param string $key
-     * @return array
-     */
-    private function parseKey(string $key): array
-    {
-        if (substr($key, -2) === '[]') {
-            $key = substr($key, 0, -2);
-        }
-        $keyParts = explode(' as ', $key);
-        if (count($keyParts) !== 2) {
-            $keyParts = [$key, $key];
-        }
-        if ($keyParts[0] === self::KEY_LIST) {
-            $keyParts[0] = null;
-        }
-        return $keyParts;
     }
 
     /**
@@ -116,29 +91,6 @@ class XmlReader
             }
         }
         return $xml;
-    }
-
-    /**
-     * Returns true either $key is array or is string with suffix `[]`
-     *
-     * @param string $key
-     * @return bool
-     */
-    private function isArray($key): bool
-    {
-        return is_array($key) || (substr((string)$key, -2) === '[]');
-    }
-
-    /**
-     * Returns true if $key starts with `@` which means
-     * that xml element attribute requested
-     *
-     * @param string $key
-     * @return bool
-     */
-    private function isAttribute(string $key): bool
-    {
-        return strpos($key, '@') === 0;
     }
 
 }

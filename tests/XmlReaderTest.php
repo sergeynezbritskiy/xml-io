@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use SergeyNezbritskiy\XmlIo\XmlReader;
 
 /**
- * Class XmlReaderAdvancedTest
- * @package SergeyNezbritskiy\XmlIo\tests
+ * Class XmlReaderTest
+ * @package SergeyN1ezbritskiy\XmlIo\tests
  */
 class XmlReaderTest extends TestCase
 {
@@ -170,38 +170,12 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
-    public function testParseKey()
-    {
-        $this->assertEquals(['user', 'user'], $this->call('parseKey', ['key' => 'user']));
-        $this->assertEquals(['users', 'users'], $this->call('parseKey', ['users[]']));
-        $this->assertEquals(['document', 'passport'], $this->call('parseKey', ['key' => 'document as passport']));
-        $this->assertEquals(['users', 'user'], $this->call('parseKey', ['key' => 'users as user[]']));
-        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{list} as user[]']));
-    }
-
     public function testGetAttribute()
     {
         $this->assertNodeEquals('name', 'Sergey');
         $this->assertNodeEquals('passport.date', '2000-12-12');
         $this->assertNodeEquals('@id', '11235813');
         $this->assertNodeEquals('passport.@id', 'MN123456');
-    }
-
-    public function testIsAttribute()
-    {
-        $this->assertTrue($this->call('isAttribute', ['key' => '@attribute']));
-        $this->assertFalse($this->call('isAttribute', ['key' => 'tag']));
-        $this->assertFalse($this->call('isAttribute', ['key' => 'tag@']));
-    }
-
-    public function testIsArray()
-    {
-        $this->assertTrue($this->call('isArray', ['key' => 'users[]']));
-        $this->assertTrue($this->call('isArray', ['key' => []]));
-        $this->assertTrue($this->call('isArray', ['key' => [1, 2, 3]]));
-        $this->assertFalse($this->call('isArray', ['key' => 'users']));
-        $this->assertFalse($this->call('isArray', ['key' => null]));
-        $this->assertFalse($this->call('isArray', ['key' => 1]));
     }
 
     /**
@@ -225,7 +199,7 @@ class XmlReaderTest extends TestCase
      */
     private function assertXmlEquals($fileName, $map, $expectedResult)
     {
-        $actualResult = $this->xmlReader->parseFile(__DIR__ . '/data/' . $fileName, $map);
+        $actualResult = $this->xmlReader->fileToArray(__DIR__ . '/data/' . $fileName, $map);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
