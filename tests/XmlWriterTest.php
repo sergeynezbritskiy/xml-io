@@ -31,7 +31,8 @@ class XmlWriterTest extends TestCase
         $this->user = [
             'id' => '11235813',
             'name' => 'Sergey',
-            'gender' => 'mail',
+            'age' => 29,
+            'gender' => 'male',
             'keywords' => [
                 'buono',
                 'brutto',
@@ -71,6 +72,29 @@ class XmlWriterTest extends TestCase
 <user/>
 XML;
         $this->assertXmlEquals([], $expectedResult);
+    }
+
+    public function testSimpleString()
+    {
+        $expectedResult = <<<XML
+<user>Sergey</user>
+XML;
+        $this->assertXmlEquals(['name'], $expectedResult);
+    }
+
+    public function testSimpleXml()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">
+    <name>Sergey</name>
+    <age>29</age>
+</user>
+XML;
+        $this->assertXmlEquals([
+            '@id' => 'id',
+            'name' => 'name',
+            'age' => 'age',
+        ], $expectedResult);
     }
 
     /**
