@@ -187,23 +187,6 @@ class XmlReaderTest extends TestCase
         $this->assertNodeEquals('passport.@id', 'MN123456');
     }
 
-    public function testIsAttribute()
-    {
-        $this->assertTrue($this->call('isAttribute', ['key' => '@attribute']));
-        $this->assertFalse($this->call('isAttribute', ['key' => 'tag']));
-        $this->assertFalse($this->call('isAttribute', ['key' => 'tag@']));
-    }
-
-    public function testIsArray()
-    {
-        $this->assertTrue($this->call('isArray', ['key' => 'users[]']));
-        $this->assertTrue($this->call('isArray', ['key' => []]));
-        $this->assertTrue($this->call('isArray', ['key' => [1, 2, 3]]));
-        $this->assertFalse($this->call('isArray', ['key' => 'users']));
-        $this->assertFalse($this->call('isArray', ['key' => null]));
-        $this->assertFalse($this->call('isArray', ['key' => 1]));
-    }
-
     /**
      * @param $key
      * @param $expectedResult

@@ -9,7 +9,7 @@ use DOMNode;
  * Class XmlWriter
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlWriter
+class XmlWriter extends Core
 {
 
     /**
@@ -57,30 +57,6 @@ class XmlWriter
             }
         }
         return $result;
-    }
-
-    /**
-     * Returns true either $key is array or is string with suffix `[]`
-     *
-     * @param string $key
-     * @return bool
-     */
-    private function isArray($key): bool
-    {
-        return is_array($key) || (substr((string)$key, -2) === '[]');
-    }
-
-
-    /**
-     * Returns true if $key starts with `@` which means
-     * that xml element attribute requested
-     *
-     * @param string $key
-     * @return bool
-     */
-    private function isAttribute(string $key): bool
-    {
-        return strpos($key, '@') === 0;
     }
 
 }
