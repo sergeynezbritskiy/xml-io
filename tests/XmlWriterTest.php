@@ -65,7 +65,7 @@ class XmlWriterTest extends TestCase
         $this->user = null;
     }
 
-    //*/
+    /*/
     //tests
     public function testEmptyMap()
     {
@@ -118,7 +118,6 @@ XML;
         ], $expectedResult);
 
     }
-//*/
 
     public function testListOfEntities()
     {
@@ -143,6 +142,26 @@ XML;
                 'city' => 'city',
                 'country' => 'country',
             ]
+        ], $expectedResult);
+
+    }
+//*/
+
+    public function testList()
+    {
+        $expectedResult = <<<XML
+<user>
+    <name>Sergey</name>
+    <keywords>
+        <keyword>buono</keyword>
+        <keyword>brutto</keyword>
+        <keyword>cattivo</keyword>
+    </keywords>
+</user>
+XML;
+        $this->assertXmlEquals([
+            'name' => 'name',
+            'keywords as keyword[]' => ['keyword']
         ], $expectedResult);
 
     }

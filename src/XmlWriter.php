@@ -43,7 +43,11 @@ class XmlWriter extends Core
 
                 $childNode = $this->createElement($document, $childNodeKey);
                 foreach ($this->getValue($data, $childNodeKey) as $item) {
-                    $listItem = $this->createNode($document, $childNodeName, $item, $childMap);
+                    if ($this->isArray($item)) {
+                        $listItem = $this->createNode($document, $childNodeName, $item, $childMap);
+                    } else {
+                        $listItem = $this->createElement($document, $childNodeName, $item);
+                    }
                     $childNode->appendChild($listItem);
                 }
                 $result->appendChild($childNode);
