@@ -9,7 +9,7 @@ use DOMNode;
  * Class XmlWriter
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlWriter extends Core
+class XmlWriter extends AbstractCore
 {
 
     /**

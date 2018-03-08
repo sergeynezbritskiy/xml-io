@@ -3,10 +3,10 @@
 namespace SergeyNezbritskiy\XmlIo;
 
 /**
- * Class Core
+ * Class AbstractCore
  * @package SergeyNezbritskiy\XmlIo
  */
-class Core
+abstract class AbstractCore
 {
 
     /**

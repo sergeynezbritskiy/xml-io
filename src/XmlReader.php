@@ -8,7 +8,7 @@ use SimpleXMLElement;
  * Class XmlReader
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlReader extends Core
+class XmlReader extends AbstractCore
 {
 
     /**
