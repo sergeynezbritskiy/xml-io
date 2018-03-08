@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use SergeyNezbritskiy\XmlIo\XmlReader;
 
 /**
- * Class XmlReaderAdvancedTest
- * @package SergeyNezbritskiy\XmlIo\tests
+ * Class XmlReaderTest
+ * @package SergeyN1ezbritskiy\XmlIo\tests
  */
 class XmlReaderTest extends TestCase
 {
@@ -225,7 +225,7 @@ class XmlReaderTest extends TestCase
      */
     private function assertXmlEquals($fileName, $map, $expectedResult)
     {
-        $actualResult = $this->xmlReader->parseFile(__DIR__ . '/data/' . $fileName, $map);
+        $actualResult = $this->xmlReader->fileToArray(__DIR__ . '/data/' . $fileName, $map);
         $this->assertEquals($expectedResult, $actualResult);
     }
 

@@ -22,9 +22,9 @@ class XmlReader
      * @param array $map
      * @return array
      */
-    public function parseFile(string $filePath, array $map): array
+    public function fileToArray(string $filePath, array $map): array
     {
-        return $this->parseString(file_get_contents($filePath), $map);
+        return $this->stringToArray(file_get_contents($filePath), $map);
     }
 
     /**
@@ -32,9 +32,9 @@ class XmlReader
      * @param array $map
      * @return array
      */
-    public function parseString(string $xml, array $map): array
+    public function stringToArray(string $xml, array $map): array
     {
-        return $this->parse(simplexml_load_string($xml), $map);
+        return $this->xmlToArray(simplexml_load_string($xml), $map);
     }
 
     /**
@@ -42,7 +42,7 @@ class XmlReader
      * @param $map
      * @return array
      */
-    public function parse(SimpleXMLElement $xml, $map): array
+    public function xmlToArray(SimpleXMLElement $xml, $map): array
     {
         $result = [];
         foreach ($map as $arrayKey => $xmlKey) {
@@ -54,7 +54,7 @@ class XmlReader
                 $currentArray = [];
                 $currentNode = $this->getNode($xml, $currentXmlKey);
                 foreach ($currentNode as $xml) {
-                    $currentArray[] = $this->parse($xml, $xmlKey);
+                    $currentArray[] = $this->xmlToArray($xml, $xmlKey);
                 }
                 if ($currentArrayKey === null) {
                     $result = array_merge($result, $currentArray);
@@ -69,7 +69,7 @@ class XmlReader
             } elseif ($this->isArray($xmlKey)) {
 
                 $childXml = $this->getNode($xml, $currentXmlKey);
-                $result[$currentArrayKey] = $this->parse($childXml, $xmlKey);
+                $result[$currentArrayKey] = $this->xmlToArray($childXml, $xmlKey);
 
             } else {
 
