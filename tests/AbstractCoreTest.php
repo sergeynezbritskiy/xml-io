@@ -3,14 +3,14 @@
 namespace SergeyNezbritskiy\XmlIo\tests;
 
 use PHPUnit\Framework\TestCase;
-use SergeyNezbritskiy\XmlIo\Core;
+use SergeyNezbritskiy\XmlIo\AbstractCore;
 use SergeyNezbritskiy\XmlIo\XmlReader;
 
 /**
- * Class CoreTest
+ * Class AbstractCoreTest
  * @package SergeyN1ezbritskiy\XmlIo\tests
  */
-class CoreTest extends TestCase
+class AbstractCoreTest extends TestCase
 {
 
     /**
@@ -23,7 +23,7 @@ class CoreTest extends TestCase
      */
     protected function setUp()
     {
-        $this->xmlReader = $this->getMockForAbstractClass(Core::class);
+        $this->xmlReader = $this->getMockForAbstractClass(AbstractCore::class);
     }
 
     /**
