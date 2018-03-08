@@ -211,6 +211,21 @@ XML;
         ], $expectedResult);
     }
 
+    public function testChangeKey()
+    {
+        $expectedResult = <<<XML
+<user identifier="11235813">
+    <user_name>Sergey</user_name>
+    <how_old_are_you>29</how_old_are_you>
+</user>
+XML;
+        $this->assertXmlEquals([
+            '@identifier' => 'id',
+            'user_name' => 'name',
+            'how_old_are_you' => 'age',
+        ], $expectedResult);
+    }
+
     /**
      * @param array $map
      * @param string $expectedResult
