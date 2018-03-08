@@ -10,7 +10,7 @@ Library for Parsing xml into php array using easy mapping. It allows you to pars
 ## Installation
 The easiest way to install module is using Composer
 ```
-composer require sergeynezbritskiy/xml-io:^2.0.0
+composer require sergeynezbritskiy/xml-io:^3.0.0
 ```
 ## Simple usage
 The most useful test cases can be seen in tests
@@ -46,7 +46,7 @@ Here is an example of how to convert such xml into array:
 ```php
 $xmlString = ' xml string from above ';
 $xmlReader = new \SergeyNezbritskiy\XmlIo\XmlReader();
-$result = $xmlReader->parseString($xmlString, [
+$result = $xmlReader->stringToArray($xmlString, [
     //array element with key `id` will be created from attribute `id`
     'id' => '@id',
     //array element with key `name` will be created from tag `name`
