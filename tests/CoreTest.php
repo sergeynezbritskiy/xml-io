@@ -52,6 +52,15 @@ class CoreTest extends TestCase
         $this->assertFalse($this->call('isArray', ['key' => 1]));
     }
 
+    public function testParseKey()
+    {
+        $this->assertEquals(['user', 'user'], $this->call('parseKey', ['key' => 'user']));
+        $this->assertEquals(['users', 'users'], $this->call('parseKey', ['users[]']));
+        $this->assertEquals(['document', 'passport'], $this->call('parseKey', ['key' => 'document as passport']));
+        $this->assertEquals(['users', 'user'], $this->call('parseKey', ['key' => 'users as user[]']));
+        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{list} as user[]']));
+    }
+
     /**
      * Call protected/private method of a class.
      *

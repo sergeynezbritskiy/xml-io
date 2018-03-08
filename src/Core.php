@@ -38,4 +38,25 @@ class Core
         return strpos($key, '@') === 0;
     }
 
+    /**
+     * @param string $key
+     * @return array
+     */
+    protected function parseKey(string $key): array
+    {
+        $keyParts = explode(' as ', $key);
+        if (count($keyParts) !== 2) {
+            $keyParts = [$key, $key];
+        }
+        if ($keyParts[0] === self::KEY_LIST) {
+            $keyParts[0] = null;
+        }
+        array_walk($keyParts, function (&$key) {
+            if (substr($key, -2) === '[]') {
+                $key = substr($key, 0, -2);
+            }
+        });
+        return $keyParts;
+    }
+
 }

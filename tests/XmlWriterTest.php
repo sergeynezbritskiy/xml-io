@@ -97,6 +97,55 @@ XML;
         ], $expectedResult);
     }
 
+    public function testNestedEntities()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">
+    <name>Sergey</name>
+    <passport id="MN123456">
+        <date>2000-12-20</date>
+    </passport>
+</user>
+XML;
+        $this->assertXmlEquals([
+            '@id' => 'id',
+            'name' => 'name',
+            'passport' => [
+                '@id' => 'id',
+                'date' => 'date',
+            ]
+        ], $expectedResult);
+
+    }
+
+    public function testListOfEntities()
+    {
+        $this->markTestSkipped();
+        $expectedResult = <<<XML
+<user>
+    <name>Sergey</name>
+    <addresses>
+        <address>
+            <city>Kharkiv</city>
+            <country>Ukraine</country>
+        </address>
+        <address>
+            <city>London</city>
+            <country>Great Britain</country>
+        </address>
+    </addresses>
+</user>
+XML;
+        $this->assertXmlEquals([
+            'name' => 'name',
+            'addresses[] as address' => [
+                'city' => 'city',
+                'country' => 'country',
+            ]
+        ], $expectedResult);
+
+    }
+
     /**
      * Call protected/private method of a class.
      *

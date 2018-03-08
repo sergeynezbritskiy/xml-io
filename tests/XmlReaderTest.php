@@ -170,15 +170,6 @@ class XmlReaderTest extends TestCase
         ]);
     }
 
-    public function testParseKey()
-    {
-        $this->assertEquals(['user', 'user'], $this->call('parseKey', ['key' => 'user']));
-        $this->assertEquals(['users', 'users'], $this->call('parseKey', ['users[]']));
-        $this->assertEquals(['document', 'passport'], $this->call('parseKey', ['key' => 'document as passport']));
-        $this->assertEquals(['users', 'user'], $this->call('parseKey', ['key' => 'users as user[]']));
-        $this->assertEquals([null, 'user'], $this->call('parseKey', ['key' => '{list} as user[]']));
-    }
-
     public function testGetAttribute()
     {
         $this->assertNodeEquals('name', 'Sergey');

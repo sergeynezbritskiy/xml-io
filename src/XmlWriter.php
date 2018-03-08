@@ -32,31 +32,54 @@ class XmlWriter extends Core
      * @param array $map
      * @return DOMNode
      */
-    private function createNode(DOMDocument $document, string $nodeName, array $data, array $map): DOMNode
+    private function createNode(DOMDocument $document, string $nodeName, array $data, $map): DOMNode
     {
-        $result = $document->createElement($nodeName);
-        foreach ($map as $key => $value) {
+        $result = $this->createElement($document, $nodeName);
+        foreach ($map as $childMapKey => $childMap) {
 
-            if ($this->isArray($key)) {
+            list($childNodeKey, $childNodeName) = $this->parseKey((string)$childMapKey);
 
-            } elseif ($this->isArray($value)) {
+            if ($this->isArray($childNodeKey)) {
 
-            } elseif (is_string($key)) {
-                if ($this->isAttribute($key)) {
-                    $key = substr($key, 1);
-                    $childNode = $document->createAttribute($key);
-                    $attributeValue = $document->createTextNode((string)$data[$value]);
-                    $childNode->appendChild($attributeValue);
-                } else {
-                    $childNode = $document->createElement($key, (string)$data[$value]);
-                }
+            } elseif ($this->isArray($childMap)) {
+
+                $node = $this->createNode($document, $childNodeName, $data[$childNodeKey], $childMap);
+                $result->appendChild($node);
+
+            } elseif (is_string($childMapKey)) {
+
+                $childNode = $this->createElement($document, $childNodeName, (string)$data[$childMap]);
                 $result->appendChild($childNode);
+
             } else {
-                $childNode = $document->createTextNode($data[$value]);
+
+                $childNode = $document->createTextNode($data[$childMap]);
                 $result->appendChild($childNode);
+
             }
         }
         return $result;
     }
 
+    private function createElement(DOMDocument $document, $xmlKey, $data = null)
+    {
+        $nodeName = ltrim($xmlKey, '@');
+
+        if ($this->isAttribute($xmlKey)) {
+            $node = $document->createAttribute($nodeName);
+        } else {
+            $node = $document->createElement($nodeName);
+        }
+
+        if ($data !== null) {
+            $nodeValue = $document->createTextNode((string)$data);
+            $node->appendChild($nodeValue);
+        }
+
+        return $node;
+    }
+
+    private function getValue($data, $key)
+    {
+    }
 }

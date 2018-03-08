@@ -75,25 +75,6 @@ class XmlReader extends Core
     }
 
     /**
-     * @param string $key
-     * @return array
-     */
-    private function parseKey(string $key): array
-    {
-        if (substr($key, -2) === '[]') {
-            $key = substr($key, 0, -2);
-        }
-        $keyParts = explode(' as ', $key);
-        if (count($keyParts) !== 2) {
-            $keyParts = [$key, $key];
-        }
-        if ($keyParts[0] === self::KEY_LIST) {
-            $keyParts[0] = null;
-        }
-        return $keyParts;
-    }
-
-    /**
      * @param SimpleXMLElement $xml
      * @param string $key
      * @return SimpleXMLElement
