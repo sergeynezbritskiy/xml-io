@@ -46,7 +46,7 @@ Here is an example of how to convert such xml into array:
 ```php
 $xmlString = ' xml string from above ';
 $xmlReader = new \SergeyNezbritskiy\XmlIo\XmlReader();
-$result = $xmlReader->stringToArray($xmlString, [
+$user = $xmlReader->stringToArray($xmlString, [
     //array element with key `id` will be created from attribute `id`
     'id' => '@id',
     //array element with key `name` will be created from tag `name`
@@ -65,9 +65,9 @@ $result = $xmlReader->stringToArray($xmlString, [
         'country' => 'country',
     ]
 ]);
-/*
+
 the result will be smth like that:
-$result = [
+$user = [
     'id' => '1',
     'name' => 'Sergey',
     'born' => '1988-20-12',
@@ -91,7 +91,23 @@ $result = [
         ],
     ]
 ];
-*/
+
+and back, convert array to xml
+$xmlWriter = new \SergeyNezbritskiy\XmlIo\XmlWriter();
+$xml = $xmlWriter->toXml($user, 'user', [
+    '@id' => 'id',
+    'name' => 'name',
+    'born' => 'born',
+    'passport' => [
+        '@id' => 'id',
+        'date' => 'date',
+    ],
+    'keywords as keyword[]' => 'keyword',
+    'addresses as address[]' => [
+        'city' => 'city',
+        'country' => 'country'
+    ]
+]);
 ```
 
 ## Inspiration
