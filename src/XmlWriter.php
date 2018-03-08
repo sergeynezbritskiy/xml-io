@@ -39,12 +39,19 @@ class XmlWriter extends Core
 
             list($childNodeKey, $childNodeName) = $this->parseKey((string)$childMapKey);
 
-            if ($this->isArray($childNodeKey)) {
+            if ($this->isArray($childMapKey)) {
+
+                $childNode = $this->createElement($document, $childNodeKey);
+                foreach ($this->getValue($data, $childNodeKey) as $item) {
+                    $listItem = $this->createNode($document, $childNodeName, $item, $childMap);
+                    $childNode->appendChild($listItem);
+                }
+                $result->appendChild($childNode);
 
             } elseif ($this->isArray($childMap)) {
 
-                $node = $this->createNode($document, $childNodeName, $data[$childNodeKey], $childMap);
-                $result->appendChild($node);
+                $childNode = $this->createNode($document, $childNodeName, $data[$childNodeKey], $childMap);
+                $result->appendChild($childNode);
 
             } elseif (is_string($childMapKey)) {
 
@@ -79,7 +86,18 @@ class XmlWriter extends Core
         return $node;
     }
 
-    private function getValue($data, $key)
+    /**
+     * @param array $data
+     * @param string $key
+     * @return array|string
+     */
+    private function getValue(array $data, string $key)
     {
+        $key = explode('.', $key);
+        foreach ($key as $level) {
+            $data = $data[$level];
+        }
+        return $data;
     }
+
 }

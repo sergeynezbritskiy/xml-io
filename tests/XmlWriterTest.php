@@ -65,6 +65,7 @@ class XmlWriterTest extends TestCase
         $this->user = null;
     }
 
+    //*/
     //tests
     public function testEmptyMap()
     {
@@ -117,10 +118,10 @@ XML;
         ], $expectedResult);
 
     }
+//*/
 
     public function testListOfEntities()
     {
-        $this->markTestSkipped();
         $expectedResult = <<<XML
 <user>
     <name>Sergey</name>
@@ -138,29 +139,12 @@ XML;
 XML;
         $this->assertXmlEquals([
             'name' => 'name',
-            'addresses[] as address' => [
+            'addresses as address[]' => [
                 'city' => 'city',
                 'country' => 'country',
             ]
         ], $expectedResult);
 
-    }
-
-    /**
-     * Call protected/private method of a class.
-     *
-     * @param string $methodName Method name to call
-     * @param array $params Array of parameters to pass into method.
-     *
-     * @return mixed Method return.
-     * @throws \ReflectionException
-     */
-    private function call($methodName, array $params = [])
-    {
-        $reflection = new \ReflectionClass(get_class($this->xmlWriter));
-        $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
-        return $method->invokeArgs($this->xmlWriter, $params);
     }
 
     /**
