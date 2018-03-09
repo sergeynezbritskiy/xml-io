@@ -51,18 +51,24 @@ class XmlWriter extends AbstractCore
 
         if ($this->isArray($nodeName)) {
             $nodeName = substr($nodeName, 0, -2);
-        } else {
-            $data = [$data];
-        }
-        foreach ($data as $item) {
-            $node = $this->arrayToNode($document, $nodeName, $map, $item);
-            if (isset($map['items'])) {
-                foreach ($map['items'] as $childNodeName => $childNodeMap) {
-                    $this->appendChild($document, $node, $childNodeName, $item, $childNodeMap);
+            if (isset($map['data']) && ($map['data'] === '{self}')) {
+                foreach ($this->getValue($data, $parentNode->nodeName) as $nodeText) {
+                    $textNode = $document->createTextNode($nodeText);
+                    $node = $document->createElement($nodeName);
+                    $node->appendChild($textNode);
+                    $parentNode->appendChild($node);
+                }
+            } else {
+                foreach ($data as $item) {
+                    $node = $this->arrayToNode($document, $nodeName, $map, $item);
+                    $parentNode->appendChild($node);
                 }
             }
+        } else {
+            $node = $this->arrayToNode($document, $nodeName, $map, $data);
             $parentNode->appendChild($node);
         }
+
     }
 
     /**
@@ -132,6 +138,11 @@ class XmlWriter extends AbstractCore
         if (isset($map['attributes'])) {
             foreach ($map['attributes'] as $attributeName => $attributeConfig) {
                 $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $data);
+            }
+        }
+        if (isset($map['items'])) {
+            foreach ($map['items'] as $childNodeName => $childNodeMap) {
+                $this->appendChild($document, $node, $childNodeName, $data, $childNodeMap);
             }
         }
         return $node;

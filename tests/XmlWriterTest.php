@@ -22,8 +22,14 @@ class XmlWriterTest extends TestCase
      */
     private $users;
 
+    /**
+     * @var array
+     */
     private $user1;
 
+    /**
+     * @var array
+     */
     private $user2;
 
     /**
@@ -37,6 +43,8 @@ class XmlWriterTest extends TestCase
             'name' => 'Sergey',
             'age' => 29,
             'gender' => 'male',
+            'born' => '1988-01-01',
+            'born_format' => 'ISO',
             'keywords' => [
                 'buono',
                 'brutto',
@@ -63,6 +71,8 @@ class XmlWriterTest extends TestCase
             'name' => 'Victoria',
             'age' => 22,
             'gender' => 'female',
+            'born' => '1988-01-01',
+            'born_format' => 'ISO',
             'keywords' => [
                 'beautiful',
                 'wonderful',
@@ -98,16 +108,13 @@ class XmlWriterTest extends TestCase
     }
 
     //tests
-    //*/
     public function testSimpleElement()
     {
         $expectedResult = <<<XML
-<user>Sergey</user>
+        <user>Sergey</user>
 XML;
         $map = [
-            'user' => [
-                'data' => 'name',
-            ],
+            'user' => ['data' => 'name'],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
@@ -115,27 +122,43 @@ XML;
     public function testShortSyntax()
     {
         $expectedResult = <<<XML
-<user>Sergey</user>
+        <user>Sergey</user>
 XML;
-        $map = [
-            'user' => 'name'
-        ];
+        $map = ['user' => 'name'];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
     public function testShortSyntaxCodeOnly()
     {
         $expectedResult = <<<XML
-<name>Sergey</name>
+        <name>Sergey</name>
 XML;
         $map = ['name'];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
+    public function testArrayShortSyntaxCodeOnly()
+    {
+        $expectedResult = <<<XML
+        <users>
+            <user>Sergey</user>
+            <user>Victoria</user>
+        </users>
+XML;
+        $map = ['users' => [
+            'items' => [
+                'user[]' => [
+                    'data' => 'name'
+                ]
+            ]
+        ]];
+        $this->assertXmlEquals($map, $expectedResult);
+    }
+
     public function testAttribute()
     {
         $expectedResult = <<<XML
-<user id="11235813">Sergey</user>
+        <user id="11235813">Sergey</user>
 XML;
         $map = [
             'user' => [
@@ -153,7 +176,7 @@ XML;
     public function testAttributeShortSyntax()
     {
         $expectedResult = <<<XML
-<user id="11235813">Sergey</user>
+        <user id="11235813">Sergey</user>
 XML;
         $map = [
             'user' => [
@@ -169,7 +192,7 @@ XML;
     public function testAttributeShortSyntaxOnlyKey()
     {
         $expectedResult = <<<XML
-<user id="11235813">Sergey</user>
+        <user id="11235813">Sergey</user>
 XML;
         $map = [
             'user' => [
@@ -183,10 +206,10 @@ XML;
     public function testNestedNodes()
     {
         $expectedResult = <<<XML
-<user id="11235813">
-    <name>Sergey</name>
-    <age>29</age>
-</user>
+        <user id="11235813">
+            <name>Sergey</name>
+            <age>29</age>
+        </user>
 XML;
         $map = [
             'user' => [
@@ -196,22 +219,20 @@ XML;
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
-    //*/
 
-    //*/
     public function testArray()
     {
         $expectedResult = <<<XML
-<users>
-    <user id="11235813">
-        <name>Sergey</name>
-        <age>29</age>
-    </user>
-    <user id="21345589">
-        <name>Victoria</name>
-        <age>22</age>
-    </user>
-</users>
+        <users>
+            <user id="11235813">
+                <name>Sergey</name>
+                <age>29</age>
+            </user>
+            <user id="21345589">
+                <name>Victoria</name>
+                <age>22</age>
+            </user>
+        </users>
 XML;
         $map = [
             'users' => [
@@ -225,9 +246,81 @@ XML;
         ];
         $this->assertXmlEquals($map, $expectedResult);
     }
-    //*/
 
-    /*/
+    public function testSimpleListOfEntities()
+    {
+        $expectedResult = <<<XML
+        <users>
+            <user id="11235813">
+                <name>Sergey</name>
+                <age>29</age>
+            </user>
+            <user id="21345589">
+                <name>Victoria</name>
+                <age>22</age>
+            </user>
+        </users>
+XML;
+        $map = [
+            'users' => [
+                'items' => [
+                    'user[]' => [
+                        'attributes' => ['id'],
+                        'items' => ['name', 'age']
+                    ],
+                ]
+            ]
+        ];
+        $this->assertXmlEquals($map, $expectedResult);
+    }
+
+    public function testSimpleListOfTextNodes()
+    {
+        $expectedResult = <<<XML
+        <users>
+            <user id="11235813">
+                <name>Sergey</name>
+                <age>29</age>
+                <keywords>
+                    <keyword>buono</keyword>
+                    <keyword>brutto</keyword>
+                    <keyword>cattivo</keyword>
+                </keywords>
+            </user>
+            <user id="21345589">
+                <name>Victoria</name>
+                <age>22</age>
+                <keywords>
+                    <keyword>beautiful</keyword>
+                    <keyword>wonderful</keyword>
+                    <keyword>smart</keyword>
+                </keywords>
+            </user>
+        </users>
+XML;
+        $map = [
+            'users' => [
+                'items' => [
+                    'user[]' => [
+                        'attributes' => ['id'],
+                        'items' => [
+                            'name',
+                            'age',
+                            'keywords' => [
+                                'items' => [
+                                    'keyword[]' => [
+                                        'data' => '{self}',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult);
+    }
+
     public function testComplexType()
     {
         $this->markTestSkipped();
@@ -249,34 +342,25 @@ XML;
                                 'attributes' => [
                                     'type' => [
                                         'data' => 'born_format'
-                                    ]
+                                    ],
                                 ],
                             ],
                             'keywords' => [
-                                'data' => 'keywords',
                                 'items' => [
                                     'keyword[]' => [
-                                        'type' => 'text',
+                                        'data' => '{self}',
                                     ],
                                 ],
                             ],
                             'addresses' => [
-                                'data' => 'addresses',
                                 'items' => [
                                     'address[]' => [
                                         'items' => [
-                                            'street' => [
-                                                'type' => 'text',
-                                                'data' => 'street',
-                                            ],
-                                            'city' => [
-                                                'type' => 'text',
-                                                'data' => 'city',
-                                            ],
-                                        ]
-                                    ]
-                                ]
-                            ]
+                                            'city', 'country',
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -286,7 +370,6 @@ XML;
 XML;
         $this->assertXmlEquals($map, $expectedResult);
     }
-    //*/
 
     /**
      * @param array $map
