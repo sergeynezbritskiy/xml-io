@@ -49,23 +49,30 @@ class XmlWriter extends AbstractCore
             $nodeName = $map['data'];
         }
 
-        $node = $document->createElement($nodeName);
-        if (isset($map['data'])) {
-            $text = $data[$map['data']];
-            $textNode = $document->createTextNode((string)$text);
-            $node->appendChild($textNode);
+        if ($this->isArray($nodeName)) {
+            $nodeName = substr($nodeName, 0, -2);
+        } else {
+            $data = [$data];
         }
-        if (isset($map['attributes'])) {
-            foreach ($map['attributes'] as $attributeName => $attributeConfig) {
-                $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $data);
+        foreach ($data as $item) {
+            $node = $document->createElement($nodeName);
+            if (isset($map['data'])) {
+                $text = $item[$map['data']];
+                $textNode = $document->createTextNode((string)$text);
+                $node->appendChild($textNode);
             }
-        }
-        if (isset($map['items'])) {
-            foreach ($map['items'] as $childNodeName => $childNodeMap) {
-                $this->appendChild($document, $node, $childNodeName, $data, $childNodeMap);
+            if (isset($map['attributes'])) {
+                foreach ($map['attributes'] as $attributeName => $attributeConfig) {
+                    $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $item);
+                }
             }
+            if (isset($map['items'])) {
+                foreach ($map['items'] as $childNodeName => $childNodeMap) {
+                    $this->appendChild($document, $node, $childNodeName, $item, $childNodeMap);
+                }
+            }
+            $parentNode->appendChild($node);
         }
-        $parentNode->appendChild($node);
     }
 
     /**
@@ -104,6 +111,17 @@ class XmlWriter extends AbstractCore
     private function getValue(array $data, string $key)
     {
         return $data[$key];
+    }
+
+    /**
+     * Returns true either $key is array or is string with suffix `[]`
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function isArray($key): bool
+    {
+        return substr((string)$key, -2) === '[]';
     }
 
 }

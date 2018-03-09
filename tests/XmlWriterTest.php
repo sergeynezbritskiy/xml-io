@@ -98,6 +98,7 @@ class XmlWriterTest extends TestCase
     }
 
     //tests
+    //*/
     public function testSimpleElement()
     {
         $expectedResult = <<<XML
@@ -142,8 +143,8 @@ XML;
                 'attributes' => [
                     'id' => [
                         'data' => 'id'
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
@@ -173,7 +174,7 @@ XML;
         $map = [
             'user' => [
                 'data' => 'name',
-                'attributes' => ['id']
+                'attributes' => ['id'],
             ],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
@@ -195,8 +196,9 @@ XML;
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
+    //*/
 
-    /*/
+    //*/
     public function testArray()
     {
         $expectedResult = <<<XML
@@ -205,7 +207,7 @@ XML;
         <name>Sergey</name>
         <age>29</age>
     </user>
-    <user id="11235813">
+    <user id="21345589">
         <name>Victoria</name>
         <age>22</age>
     </user>
@@ -221,7 +223,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertXmlEquals($map, $expectedResult, 'user1');
+        $this->assertXmlEquals($map, $expectedResult);
     }
     //*/
 
