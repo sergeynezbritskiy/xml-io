@@ -111,6 +111,75 @@ XML;
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
+    public function testShortSyntax()
+    {
+        $expectedResult = <<<XML
+<user>Sergey</user>
+XML;
+        $map = [
+            'user' => 'name'
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testShortSyntaxCodeOnly()
+    {
+        $expectedResult = <<<XML
+<name>Sergey</name>
+XML;
+        $map = ['name'];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testAttribute()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">Sergey</user>
+XML;
+        $map = [
+            'user' => [
+                'data' => 'name',
+                'attributes' => [
+                    'id' => [
+                        'data' => 'id'
+                    ]
+                ]
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testAttributeShortSyntax()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">Sergey</user>
+XML;
+        $map = [
+            'user' => [
+                'data' => 'name',
+                'attributes' => [
+                    'id' => 'id'
+                ]
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testAttributeShortSyntaxOnlyKey()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">Sergey</user>
+XML;
+        $map = [
+            'user' => [
+                'data' => 'name',
+                'attributes' => ['id']
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    /*/
     public function testComplexType()
     {
         $this->markTestSkipped();
@@ -169,6 +238,7 @@ XML;
 XML;
         $this->assertXmlEquals($map, $expectedResult);
     }
+    //*/
 
     /**
      * @param array $map
