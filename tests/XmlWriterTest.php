@@ -179,6 +179,52 @@ XML;
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
+    public function testNestedNodes()
+    {
+        $expectedResult = <<<XML
+<user id="11235813">
+    <name>Sergey</name>
+    <age>29</age>
+</user>
+XML;
+        $map = [
+            'user' => [
+                'attributes' => ['id'],
+                'items' => ['name', 'age']
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    /*/
+    public function testArray()
+    {
+        $expectedResult = <<<XML
+<users>
+    <user id="11235813">
+        <name>Sergey</name>
+        <age>29</age>
+    </user>
+    <user id="11235813">
+        <name>Victoria</name>
+        <age>22</age>
+    </user>
+</users>
+XML;
+        $map = [
+            'users' => [
+                'items' => [
+                    'user[]' => [
+                        'attributes' => ['id'],
+                        'items' => ['name', 'age']
+                    ],
+                ]
+            ]
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+    //*/
+
     /*/
     public function testComplexType()
     {
