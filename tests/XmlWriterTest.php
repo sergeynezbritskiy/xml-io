@@ -20,12 +20,11 @@ class XmlWriterTest extends TestCase
     /**
      * @var array
      */
-    private $user;
-
-    /**
-     * @var array
-     */
     private $users;
+
+    private $user1;
+
+    private $user2;
 
     /**
      * @inheritdoc
@@ -33,7 +32,7 @@ class XmlWriterTest extends TestCase
     protected function setUp()
     {
         $this->xmlWriter = new XmlWriter();
-        $this->user = [
+        $this->user1 = [
             'id' => '11235813',
             'name' => 'Sergey',
             'age' => 29,
@@ -59,17 +58,31 @@ class XmlWriterTest extends TestCase
                 ]
             ]
         ];
+        $this->user2 = [
+            'id' => '21345589',
+            'name' => 'Victoria',
+            'age' => 22,
+            'gender' => 'female',
+            'keywords' => [
+                'beautiful',
+                'wonderful',
+                'smart',
+            ],
+            'passport' => [
+                'id' => 'NM654321',
+                'date' => '2007-04-13',
+                'issued' => 'another organisation title',
+            ],
+            'addresses' => [
+                [
+                    'city' => 'New-York',
+                    'country' => 'USA',
+                ],
+            ]
+        ];
         $this->users = [
-            [
-                'id' => 1,
-                'name' => 'Sergey',
-                'age' => 29,
-            ],
-            [
-                'id' => 2,
-                'name' => 'Victoria',
-                'age' => 23,
-            ],
+            $this->user1,
+            $this->user2,
         ];
     }
 
@@ -79,204 +92,93 @@ class XmlWriterTest extends TestCase
     protected function tearDown()
     {
         $this->xmlWriter = null;
-        $this->user = null;
+        $this->user1 = null;
+        $this->user2 = null;
+        $this->users = null;
     }
 
     //tests
-    public function testEmptyMap()
-    {
-        $expectedResult = <<<XML
-<user/>
-XML;
-        $this->assertXmlEquals([], $expectedResult);
-    }
-
-    public function testSimpleString()
+    public function testSimpleElement()
     {
         $expectedResult = <<<XML
 <user>Sergey</user>
 XML;
-        $this->assertXmlEquals(['name'], $expectedResult);
-    }
-
-    public function testSimpleXml()
-    {
-        $expectedResult = <<<XML
-<user id="11235813">
-    <name>Sergey</name>
-    <age>29</age>
-</user>
-XML;
-        $this->assertXmlEquals([
-            '@id' => 'id',
-            'name' => 'name',
-            'age' => 'age',
-        ], $expectedResult);
-    }
-
-    public function testNestedEntities()
-    {
-        $expectedResult = <<<XML
-<user id="11235813">
-    <name>Sergey</name>
-    <passport id="MN123456">
-        <date>2000-12-20</date>
-    </passport>
-</user>
-XML;
-        $this->assertXmlEquals([
-            '@id' => 'id',
-            'name' => 'name',
-            'passport' => [
-                '@id' => 'id',
-                'date' => 'date',
-            ]
-        ], $expectedResult);
-
-    }
-
-    public function testListOfEntities()
-    {
-        $expectedResult = <<<XML
-<user>
-    <name>Sergey</name>
-    <addresses>
-        <address>
-            <city>Kharkiv</city>
-            <country>Ukraine</country>
-        </address>
-        <address>
-            <city>London</city>
-            <country>Great Britain</country>
-        </address>
-    </addresses>
-</user>
-XML;
-        $this->assertXmlEquals([
-            'name' => 'name',
-            'addresses as address[]' => [
-                'city' => 'city',
-                'country' => 'country',
-            ]
-        ], $expectedResult);
-
-    }
-
-    public function testList()
-    {
-        $expectedResult = <<<XML
-<user>
-    <name>Sergey</name>
-    <keywords>
-        <keyword>buono</keyword>
-        <keyword>brutto</keyword>
-        <keyword>cattivo</keyword>
-    </keywords>
-</user>
-XML;
-        $this->assertXmlEquals([
-            'name' => 'name',
-            'keywords as keyword[]' => 'keyword'
-        ], $expectedResult);
-
-    }
-
-    public function fullTest()
-    {
-        $expectedResult = <<<XML
-<user id="11235813">
-    <name>Sergey</name>
-    <age>29</age>
-    <gender>male</gender>
-    <passport id="MN123456">
-        <date>2000-12-20</date>
-        <issued>organisation title</issued>
-    </passport>
-    <keywords>
-        <keyword>buono</keyword>
-        <keyword>brutto</keyword>
-        <keyword>cattivo</keyword>
-    </keywords>
-    <addresses>
-        <address>
-            <city>Kharkiv</city>
-            <country>Ukraine</country>
-        </address>
-        <address>
-            <city>London</city>
-            <country>Great Britain</country>
-        </address>
-    </addresses>
-</user>
-XML;
-        $this->assertXmlEquals([
-            '@id' => 'id',
-            'name',
-            'age',
-            'gender',
-            'passport' => [
-                '@id' => 'id',
-                'date',
-                'issued',
+        $map = [
+            'user' => [
+                'data' => 'name',
             ],
-            'keywords as keyword[]' => 'keyword',
-            'addresses as address[]' => [
-                'city',
-                'country',
-            ]
-
-        ], $expectedResult);
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
-    public function testChangeKey()
+    public function testComplexType()
     {
+        $this->markTestSkipped();
+        $map = [
+            'users' => [
+                'items' => [
+                    'user[]' => [
+                        'attributes' => [
+                            'id' => [
+                                'data' => 'id'
+                            ],
+                        ],
+                        'items' => [
+                            'name' => [
+                                'data' => 'name',
+                            ],
+                            'born' => [
+                                'data' => 'born',
+                                'attributes' => [
+                                    'type' => [
+                                        'data' => 'born_format'
+                                    ]
+                                ],
+                            ],
+                            'keywords' => [
+                                'data' => 'keywords',
+                                'items' => [
+                                    'keyword[]' => [
+                                        'type' => 'text',
+                                    ],
+                                ],
+                            ],
+                            'addresses' => [
+                                'data' => 'addresses',
+                                'items' => [
+                                    'address[]' => [
+                                        'items' => [
+                                            'street' => [
+                                                'type' => 'text',
+                                                'data' => 'street',
+                                            ],
+                                            'city' => [
+                                                'type' => 'text',
+                                                'data' => 'city',
+                                            ],
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $expectedResult = <<<XML
-<user identifier="11235813">
-    <user_name>Sergey</user_name>
-    <how_old_are_you>29</how_old_are_you>
-</user>
 XML;
-        $this->assertXmlEquals([
-            '@identifier' => 'id',
-            'user_name' => 'name',
-            'how_old_are_you' => 'age',
-        ], $expectedResult);
-    }
-
-    public function testListOnTopLevel()
-    {
-        $this->markTestSkipped('Not supported yet');
-        $expectedResult = <<<XML
-<users>
-    <user id="1">
-        <name>Sergey</name>
-        <age>29</age>
-    </user>
-    <user id="2">
-        <name>Victoria</name>
-        <age>23</age>
-    </user>
-</users>
-XML;
-
-        $expectedResult = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . $expectedResult;
-        $actualResult = $this->xmlWriter->toXml($this->users, 'users as user[]', [
-            '@identifier' => 'id',
-            'user_name' => 'name',
-            'how_old_are_you' => 'age',
-        ]);
-        $this->assertXmlStringEqualsXmlString($expectedResult, $actualResult);
+        $this->assertXmlEquals($map, $expectedResult);
     }
 
     /**
      * @param array $map
      * @param string $expectedResult
-     * @param string $root
+     * @param string $data
      */
-    private function assertXmlEquals($map, $expectedResult, $root = 'user')
+    private function assertXmlEquals($map, $expectedResult, $data = 'users')
     {
         $expectedResult = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . $expectedResult;
-        $actualResult = $this->xmlWriter->toXml($this->$root, $root, $map);
+        $actualResult = $this->xmlWriter->toXml($this->$data, $map);
         $this->assertXmlStringEqualsXmlString($expectedResult, $actualResult);
     }
 
