@@ -55,17 +55,7 @@ class XmlWriter extends AbstractCore
             $data = [$data];
         }
         foreach ($data as $item) {
-            $node = $document->createElement($nodeName);
-            if (isset($map['data'])) {
-                $text = $item[$map['data']];
-                $textNode = $document->createTextNode((string)$text);
-                $node->appendChild($textNode);
-            }
-            if (isset($map['attributes'])) {
-                foreach ($map['attributes'] as $attributeName => $attributeConfig) {
-                    $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $item);
-                }
-            }
+            $node = $this->arrayToNode($document, $nodeName, $map, $item);
             if (isset($map['items'])) {
                 foreach ($map['items'] as $childNodeName => $childNodeMap) {
                     $this->appendChild($document, $node, $childNodeName, $item, $childNodeMap);
@@ -108,9 +98,9 @@ class XmlWriter extends AbstractCore
      * @param string $key
      * @return mixed
      */
-    private function getValue(array $data, string $key)
+    private function getValue($data, string $key)
     {
-        return $data[$key];
+        return is_array($data) ? $data[$key] : $data;
     }
 
     /**
@@ -122,6 +112,29 @@ class XmlWriter extends AbstractCore
     protected function isArray($key): bool
     {
         return substr((string)$key, -2) === '[]';
+    }
+
+    /**
+     * @param DomDocument $document
+     * @param string $nodeName
+     * @param array $map
+     * @param array $data
+     * @return DOMNode
+     */
+    private function arrayToNode(DOMDocument $document, string $nodeName, $map, $data): DOMNode
+    {
+        $node = $document->createElement($nodeName);
+        if (isset($map['data'])) {
+            $text = $this->getValue($data, $map['data']);
+            $textNode = $document->createTextNode((string)$text);
+            $node->appendChild($textNode);
+        }
+        if (isset($map['attributes'])) {
+            foreach ($map['attributes'] as $attributeName => $attributeConfig) {
+                $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $data);
+            }
+        }
+        return $node;
     }
 
 }
