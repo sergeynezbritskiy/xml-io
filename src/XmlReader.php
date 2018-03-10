@@ -12,21 +12,11 @@ class XmlReader extends AbstractCore
 {
 
     /**
-     * @param string $filePath
-     * @param array $map
-     * @return array
-     */
-    public function fileToArray(string $filePath, array $map): array
-    {
-        return $this->stringToArray(file_get_contents($filePath), $map);
-    }
-
-    /**
      * @param string $xml
      * @param array $map
      * @return array
      */
-    public function stringToArray(string $xml, array $map): array
+    public function toArray(string $xml, array $map): array
     {
         return $this->xmlToArray(simplexml_load_string($xml), $map);
     }

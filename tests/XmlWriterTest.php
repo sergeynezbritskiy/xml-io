@@ -108,21 +108,15 @@ class XmlWriterTest extends TestCase
     }
 
     //tests
-    public function testComplexType()
+    public function testArrayOfComplexTypes()
     {
         $map = [
             'users' => [
                 'children' => [
                     'user[]' => [
-                        'attributes' => [
-                            'id' => [
-                                'text' => 'id'
-                            ],
-                        ],
+                        'attributes' => ['id'],
                         'children' => [
-                            'name' => [
-                                'text' => 'name',
-                            ],
+                            'name',
                             'age',
                             'born' => [
                                 'text' => 'born',
@@ -144,9 +138,7 @@ class XmlWriterTest extends TestCase
                                 'children' => [
                                     'address[]' => [
                                         'dataProvider' => 'addresses',
-                                        'children' => [
-                                            'city', 'country',
-                                        ],
+                                        'children' => ['city', 'country'],
                                     ],
                                 ],
                             ],
@@ -196,6 +188,66 @@ class XmlWriterTest extends TestCase
 </users>
 XML;
         $this->assertXmlEquals($map, $expectedResult);
+    }
+
+    public function testComplexType()
+    {
+        $map = [
+            'user' => [
+                'attributes' => ['id'],
+                'children' => [
+                    'name',
+                    'age',
+                    'born' => [
+                        'text' => 'born',
+                        'attributes' => [
+                            'format' => [
+                                'text' => 'born_format'
+                            ],
+                        ],
+                    ],
+                    'keywords' => [
+                        'children' => [
+                            'keyword[]' => [
+                                'dataProvider' => 'keywords',
+                                'text' => '{self}',
+                            ],
+                        ],
+                    ],
+                    'addresses' => [
+                        'children' => [
+                            'address[]' => [
+                                'dataProvider' => 'addresses',
+                                'children' => ['city', 'country'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $expectedResult = <<<XML
+<user id="11235813">
+    <name>Sergey</name>
+    <age>29</age>
+    <born format="ISO">1988-01-01</born>
+    <keywords>
+        <keyword>buono</keyword>
+        <keyword>brutto</keyword>
+        <keyword>cattivo</keyword>
+    </keywords>
+    <addresses>
+        <address>
+            <city>Kharkiv</city>
+            <country>Ukraine</country>
+        </address>
+        <address>
+            <city>London</city>
+            <country>Great Britain</country>
+        </address>
+    </addresses>
+</user>
+XML;
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
     public function testSimpleElement()
