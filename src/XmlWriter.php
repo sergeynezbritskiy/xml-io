@@ -9,7 +9,7 @@ use DOMNode;
  * Class XmlWriter
  * @package SergeyNezbritskiy\XmlIo
  */
-class XmlWriter extends AbstractCore
+class XmlWriter
 {
 
     /**
@@ -53,7 +53,7 @@ class XmlWriter extends AbstractCore
             $data = $this->getValue($data, $map['dataProvider']);
         }
 
-        if ($this->isArray($nodeName)) {
+        if (substr($nodeName, -2) === '[]') {
             $nodeName = substr($nodeName, 0, -2);
         } else {
             $data = [$data];
@@ -126,17 +126,6 @@ class XmlWriter extends AbstractCore
             return $data;
         }
         return is_array($data) ? $data[$key] : $data;
-    }
-
-    /**
-     * Returns true either $key is array or is string with suffix `[]`
-     *
-     * @param string $key
-     * @return bool
-     */
-    protected function isArray($key): bool
-    {
-        return substr((string)$key, -2) === '[]';
     }
 
 }
