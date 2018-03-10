@@ -94,19 +94,33 @@ $user = [
 
 and back, convert array to xml
 $xmlWriter = new \SergeyNezbritskiy\XmlIo\XmlWriter();
-$xml = $xmlWriter->toXml($user, 'user', [
-    '@id' => 'id',
-    'name' => 'name',
-    'born' => 'born',
-    'passport' => [
-        '@id' => 'id',
-        'date' => 'date',
+$xml = $xmlWriter->toXml($user, 
+'user' => [
+    'attributes' => ['id'],
+    'children' => [
+        'name',
+        'born',
+        'passport' => [
+            'attributes' => ['id'],
+            'children' => 'date',
+        ],
+        'keywords' => [
+            'children' => [
+                'keyword[]' => [
+                    'dataProvider' => 'keywords',
+                    'text' => '{self}',
+                ],
+            ],
+        ],
+        'addresses' => [
+            'children' => [
+                'address[]' => [
+                    'dataProvider' => 'addresses',
+                    'children' => ['city', 'country'],
+                ],
+            ],
+        ],
     ],
-    'keywords as keyword[]' => 'keyword',
-    'addresses as address[]' => [
-        'city' => 'city',
-        'country' => 'country'
-    ]
 ]);
 ```
 
