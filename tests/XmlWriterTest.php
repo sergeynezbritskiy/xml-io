@@ -114,7 +114,7 @@ class XmlWriterTest extends TestCase
         <user>Sergey</user>
 XML;
         $map = [
-            'user' => ['data' => 'name'],
+            'user' => ['text' => 'name'],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
@@ -137,6 +137,7 @@ XML;
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
+    /*/
     public function testArrayShortSyntaxCodeOnly()
     {
         $expectedResult = <<<XML
@@ -154,7 +155,9 @@ XML;
         ]];
         $this->assertXmlEquals($map, $expectedResult);
     }
+    //*/
 
+    //*/
     public function testAttribute()
     {
         $expectedResult = <<<XML
@@ -162,10 +165,10 @@ XML;
 XML;
         $map = [
             'user' => [
-                'data' => 'name',
+                'text' => 'name',
                 'attributes' => [
                     'id' => [
-                        'data' => 'id'
+                        'text' => 'id'
                     ],
                 ],
             ],
@@ -180,7 +183,7 @@ XML;
 XML;
         $map = [
             'user' => [
-                'data' => 'name',
+                'text' => 'name',
                 'attributes' => [
                     'id' => 'id'
                 ]
@@ -196,13 +199,14 @@ XML;
 XML;
         $map = [
             'user' => [
-                'data' => 'name',
+                'text' => 'name',
                 'attributes' => ['id'],
             ],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
+    /*/
     public function testNestedNodes()
     {
         $expectedResult = <<<XML
@@ -325,7 +329,7 @@ XML;
     {
         $this->markTestSkipped();
         $map = [
-            'users' => [
+            'users' => [//dataProvider as it is - array of
                 'items' => [
                     'user[]' => [
                         'attributes' => [
@@ -370,6 +374,7 @@ XML;
 XML;
         $this->assertXmlEquals($map, $expectedResult);
     }
+    //*/
 
     /**
      * @param array $map

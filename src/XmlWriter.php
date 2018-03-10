@@ -21,7 +21,7 @@ class XmlWriter extends AbstractCore
     {
         $document = new DOMDocument();
         foreach ($map as $nodeName => $nodeMap) {
-            $this->appendChild($document, $document, $nodeName, $data, $nodeMap);
+            $this->appendElement($document, $document, $nodeName, $data, $nodeMap);
         }
         return $document->saveXML();
     }
@@ -34,69 +34,65 @@ class XmlWriter extends AbstractCore
      * @param $map
      * @return void
      */
-    private function appendChild(DOMDocument $document, DOMNode $parentNode, $nodeName, $data, $map)
+    private function appendElement(DOMDocument $document, DOMNode $parentNode, $nodeName, $data, $map)
     {
         /*
          * if node was set like ['user' => 'user']
          */
         if (is_string($map)) {
-            $map = ['data' => $map];
+            $map = ['text' => $map];
         }
         /*
          * if node was set like ['user']
          */
         if (is_numeric($nodeName)) {
-            $nodeName = $map['data'];
+            $nodeName = $map['text'];
         }
 
-        if ($this->isArray($nodeName)) {
-            $nodeName = substr($nodeName, 0, -2);
-            if (isset($map['data']) && ($map['data'] === '{self}')) {
-                foreach ($this->getValue($data, $parentNode->nodeName) as $nodeText) {
-                    $textNode = $document->createTextNode($nodeText);
-                    $node = $document->createElement($nodeName);
-                    $node->appendChild($textNode);
-                    $parentNode->appendChild($node);
-                }
-            } else {
-                foreach ($data as $item) {
-                    $node = $this->arrayToNode($document, $nodeName, $map, $item);
-                    $parentNode->appendChild($node);
-                }
+        if (isset($map['dataProvider'])) {
+            $data = $this->getValue($data, $map['dataProvider']);
+        }
+        $node = $document->createElement($nodeName);
+        if (isset($map['text'])) {
+            $text = $this->getValue($data, $map['text']);
+            $textNode = $document->createTextNode($text);
+            $node->appendChild($textNode);
+        }
+        if (isset($map['attributes'])) {
+            foreach ($map['attributes'] as $attributeKey => $attributeConfig) {
+                $attributeNode = $this->createAttribute($document, $attributeKey, $attributeConfig, $data);
+                $node->appendChild($attributeNode);
             }
-        } else {
-            $node = $this->arrayToNode($document, $nodeName, $map, $data);
-            $parentNode->appendChild($node);
         }
-
+        $parentNode->appendChild($node);
     }
 
     /**
      * @param DomDocument $document
-     * @param DOMNode $node
      * @param string $attributeName
      * @param array|string $attributeConfig
      * @param array $data
+     * @return DOMNode
      */
-    private function appendAttribute(DOMDocument $document, DOMNode $node, $attributeName, $attributeConfig, $data)
+    private function createAttribute(DOMDocument $document, $attributeName, $attributeConfig, $data): DOMNode
     {
         /*
          * if attribute was set like 'attributes' => ['attributeName' => 'dataKey']
          */
         if (is_string($attributeConfig)) {
-            $attributeConfig = ['data' => $attributeConfig];
+            $attributeConfig = ['text' => $attributeConfig];
         }
         /*
          * if attribute was set like 'attributes' => ['attributeName']
          */
         if (is_numeric($attributeName)) {
-            $attributeName = $attributeConfig['data'];
+            $attributeName = $attributeConfig['text'];
         }
-        $attributeValue = $this->getValue($data, $attributeConfig['data']);
+        $attributeValue = $this->getValue($data, $attributeConfig['text']);
         $attributeNode = $document->createAttribute($attributeName);
         $textNode = $document->createTextNode($attributeValue);
         $attributeNode->appendChild($textNode);
-        $node->appendChild($attributeNode);
+        return $attributeNode;
     }
 
     /**
@@ -142,7 +138,7 @@ class XmlWriter extends AbstractCore
         }
         if (isset($map['items'])) {
             foreach ($map['items'] as $childNodeName => $childNodeMap) {
-                $this->appendChild($document, $node, $childNodeName, $data, $childNodeMap);
+                $this->appendElement($document, $node, $childNodeName, $data, $childNodeMap);
             }
         }
         return $node;
