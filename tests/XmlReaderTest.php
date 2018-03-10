@@ -199,7 +199,7 @@ class XmlReaderTest extends TestCase
      */
     private function assertXmlEquals($fileName, $map, $expectedResult)
     {
-        $actualResult = $this->xmlReader->fileToArray(__DIR__ . '/data/' . $fileName, $map);
+        $actualResult = $this->xmlReader->toArray(file_get_contents(__DIR__ . '/data/' . $fileName), $map);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
