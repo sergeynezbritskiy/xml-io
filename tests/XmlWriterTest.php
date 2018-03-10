@@ -137,27 +137,6 @@ XML;
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
-    /*/
-    public function testArrayShortSyntaxCodeOnly()
-    {
-        $expectedResult = <<<XML
-        <users>
-            <user>Sergey</user>
-            <user>Victoria</user>
-        </users>
-XML;
-        $map = ['users' => [
-            'items' => [
-                'user[]' => [
-                    'text' => 'name'
-                ]
-            ]
-        ]];
-        $this->assertXmlEquals($map, $expectedResult);
-    }
-    //*/
-
-    //*/
     public function testAttribute()
     {
         $expectedResult = <<<XML
@@ -186,7 +165,7 @@ XML;
                 'text' => 'name',
                 'attributes' => [
                     'id' => 'id'
-                ]
+                ],
             ],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
@@ -206,7 +185,6 @@ XML;
         $this->assertXmlEquals($map, $expectedResult, 'user1');
     }
 
-    /*/
     public function testNestedNodes()
     {
         $expectedResult = <<<XML
@@ -218,10 +196,63 @@ XML;
         $map = [
             'user' => [
                 'attributes' => ['id'],
-                'items' => ['name', 'age']
+                'children' => ['name', 'age'],
             ],
         ];
         $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testNestedComplexNodes()
+    {
+        $expectedResult = <<<XML
+        <user id="11235813">
+            <name>Sergey</name>
+            <age>29</age>
+            <passport id="MN123456">
+                <date>2000-12-20</date>
+                <issued>organisation title</issued>
+            </passport>
+        </user>
+XML;
+        $map = [
+            'user' => [
+                'attributes' => ['id'],
+                'children' => ['name', 'age', 'passport' => [
+                    'dataProvider' => 'passport',
+                    'attributes' => ['id'],
+                    'children' => ['date', 'issued']
+                ]],
+            ],
+        ];
+        $this->assertXmlEquals($map, $expectedResult, 'user1');
+    }
+
+    public function testArrayShortSyntaxCodeOnly()
+    {
+        $expectedResult = <<<XML
+        <users>
+            <user>Sergey</user>
+            <user>Victoria</user>
+        </users>
+XML;
+        $map = [
+            'users' => [
+                'children' => [
+                    'user[]' => [
+                        'text' => 'name'
+                    ],
+                ],
+            ]
+        ];
+        $this->assertXmlEquals($map, $expectedResult);
+        $map = [
+            'users' => [
+                'children' => [
+                    'user[]' => 'name'
+                ],
+            ]
+        ];
+        $this->assertXmlEquals($map, $expectedResult);
     }
 
     public function testArray()
@@ -240,37 +271,10 @@ XML;
 XML;
         $map = [
             'users' => [
-                'items' => [
+                'children' => [
                     'user[]' => [
                         'attributes' => ['id'],
-                        'items' => ['name', 'age']
-                    ],
-                ]
-            ]
-        ];
-        $this->assertXmlEquals($map, $expectedResult);
-    }
-
-    public function testSimpleListOfEntities()
-    {
-        $expectedResult = <<<XML
-        <users>
-            <user id="11235813">
-                <name>Sergey</name>
-                <age>29</age>
-            </user>
-            <user id="21345589">
-                <name>Victoria</name>
-                <age>22</age>
-            </user>
-        </users>
-XML;
-        $map = [
-            'users' => [
-                'items' => [
-                    'user[]' => [
-                        'attributes' => ['id'],
-                        'items' => ['name', 'age']
+                        'children' => ['name', 'age']
                     ],
                 ]
             ]
@@ -304,16 +308,17 @@ XML;
 XML;
         $map = [
             'users' => [
-                'items' => [
+                'children' => [
                     'user[]' => [
                         'attributes' => ['id'],
-                        'items' => [
+                        'children' => [
                             'name',
                             'age',
                             'keywords' => [
-                                'items' => [
+                                'children' => [
                                     'keyword[]' => [
-                                        'data' => '{self}',
+                                        'dataProvider' => 'keywords',
+                                        'text' => '{self}',
                                     ],
                                 ],
                             ],
@@ -329,7 +334,7 @@ XML;
     {
         $this->markTestSkipped();
         $map = [
-            'users' => [//dataProvider as it is - array of
+            'users' => [
                 'items' => [
                     'user[]' => [
                         'attributes' => [

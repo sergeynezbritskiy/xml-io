@@ -52,26 +52,39 @@ class XmlWriter extends AbstractCore
         if (isset($map['dataProvider'])) {
             $data = $this->getValue($data, $map['dataProvider']);
         }
+
         if ($this->isArray($nodeName)) {
             $nodeName = substr($nodeName, 0, -2);
         } else {
             $data = [$data];
         }
+
         foreach ($data as $item) {
+
             $node = $document->createElement($nodeName);
+
             if (isset($map['text'])) {
-                $text = $this->getValue($item, $map['text']);
+                $text = (string)$this->getValue($item, $map['text']);
                 $textNode = $document->createTextNode($text);
                 $node->appendChild($textNode);
             }
+
             if (isset($map['attributes'])) {
                 foreach ($map['attributes'] as $attributeKey => $attributeConfig) {
                     $attributeNode = $this->createAttribute($document, $attributeKey, $attributeConfig, $item);
                     $node->appendChild($attributeNode);
                 }
             }
+
+            if (isset($map['children'])) {
+                foreach ($map['children'] as $childNodeName => $childNodeMap) {
+                    $this->appendElement($document, $node, $childNodeName, $item, $childNodeMap);
+                }
+            }
+
             $parentNode->appendChild($node);
         }
+
     }
 
     /**
@@ -97,7 +110,7 @@ class XmlWriter extends AbstractCore
         }
         $attributeValue = $this->getValue($data, $attributeConfig['text']);
         $attributeNode = $document->createAttribute($attributeName);
-        $textNode = $document->createTextNode($attributeValue);
+        $textNode = $document->createTextNode((string)$attributeValue);
         $attributeNode->appendChild($textNode);
         return $attributeNode;
     }
@@ -109,6 +122,9 @@ class XmlWriter extends AbstractCore
      */
     private function getValue($data, string $key)
     {
+        if ($key == '{self}') {
+            return $data;
+        }
         return is_array($data) ? $data[$key] : $data;
     }
 
@@ -121,34 +137,6 @@ class XmlWriter extends AbstractCore
     protected function isArray($key): bool
     {
         return substr((string)$key, -2) === '[]';
-    }
-
-    /**
-     * @param DomDocument $document
-     * @param string $nodeName
-     * @param array $map
-     * @param array $data
-     * @return DOMNode
-     */
-    private function arrayToNode(DOMDocument $document, string $nodeName, $map, $data): DOMNode
-    {
-        $node = $document->createElement($nodeName);
-        if (isset($map['data'])) {
-            $text = $this->getValue($data, $map['data']);
-            $textNode = $document->createTextNode((string)$text);
-            $node->appendChild($textNode);
-        }
-        if (isset($map['attributes'])) {
-            foreach ($map['attributes'] as $attributeName => $attributeConfig) {
-                $this->appendAttribute($document, $node, $attributeName, $attributeConfig, $data);
-            }
-        }
-        if (isset($map['items'])) {
-            foreach ($map['items'] as $childNodeName => $childNodeMap) {
-                $this->appendElement($document, $node, $childNodeName, $data, $childNodeMap);
-            }
-        }
-        return $node;
     }
 
 }
