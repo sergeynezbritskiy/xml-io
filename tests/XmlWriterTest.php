@@ -85,7 +85,7 @@ class XmlWriterTest extends TestCase
             ],
             'addresses' => [
                 [
-                    'city' => 'New-York',
+                    'city' => 'New York',
                     'country' => 'USA',
                 ],
             ]
@@ -108,6 +108,96 @@ class XmlWriterTest extends TestCase
     }
 
     //tests
+    public function testComplexType()
+    {
+        $map = [
+            'users' => [
+                'children' => [
+                    'user[]' => [
+                        'attributes' => [
+                            'id' => [
+                                'text' => 'id'
+                            ],
+                        ],
+                        'children' => [
+                            'name' => [
+                                'text' => 'name',
+                            ],
+                            'age',
+                            'born' => [
+                                'text' => 'born',
+                                'attributes' => [
+                                    'format' => [
+                                        'text' => 'born_format'
+                                    ],
+                                ],
+                            ],
+                            'keywords' => [
+                                'children' => [
+                                    'keyword[]' => [
+                                        'dataProvider' => 'keywords',
+                                        'text' => '{self}',
+                                    ],
+                                ],
+                            ],
+                            'addresses' => [
+                                'children' => [
+                                    'address[]' => [
+                                        'dataProvider' => 'addresses',
+                                        'children' => [
+                                            'city', 'country',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $expectedResult = <<<XML
+<users>
+    <user id="11235813">
+        <name>Sergey</name>
+        <age>29</age>
+        <born format="ISO">1988-01-01</born>
+        <keywords>
+            <keyword>buono</keyword>
+            <keyword>brutto</keyword>
+            <keyword>cattivo</keyword>
+        </keywords>
+        <addresses>
+            <address>
+                <city>Kharkiv</city>
+                <country>Ukraine</country>
+            </address>
+            <address>
+                <city>London</city>
+                <country>Great Britain</country>
+            </address>
+        </addresses>
+    </user>
+    <user id="21345589">
+        <name>Victoria</name>
+        <age>22</age>
+        <born format="ISO">1988-01-01</born>
+        <keywords>
+            <keyword>beautiful</keyword>
+            <keyword>wonderful</keyword>
+            <keyword>smart</keyword>
+        </keywords>
+        <addresses>
+            <address>
+                <city>New York</city>
+                <country>USA</country>
+            </address>
+        </addresses>
+    </user>
+</users>
+XML;
+        $this->assertXmlEquals($map, $expectedResult);
+    }
+
     public function testSimpleElement()
     {
         $expectedResult = <<<XML
@@ -329,57 +419,6 @@ XML;
         ];
         $this->assertXmlEquals($map, $expectedResult);
     }
-
-    public function testComplexType()
-    {
-        $this->markTestSkipped();
-        $map = [
-            'users' => [
-                'items' => [
-                    'user[]' => [
-                        'attributes' => [
-                            'id' => [
-                                'data' => 'id'
-                            ],
-                        ],
-                        'items' => [
-                            'name' => [
-                                'data' => 'name',
-                            ],
-                            'born' => [
-                                'data' => 'born',
-                                'attributes' => [
-                                    'type' => [
-                                        'data' => 'born_format'
-                                    ],
-                                ],
-                            ],
-                            'keywords' => [
-                                'items' => [
-                                    'keyword[]' => [
-                                        'data' => '{self}',
-                                    ],
-                                ],
-                            ],
-                            'addresses' => [
-                                'items' => [
-                                    'address[]' => [
-                                        'items' => [
-                                            'city', 'country',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $expectedResult = <<<XML
-XML;
-        $this->assertXmlEquals($map, $expectedResult);
-    }
-    //*/
 
     /**
      * @param array $map
