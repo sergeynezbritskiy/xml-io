@@ -52,19 +52,26 @@ class XmlWriter extends AbstractCore
         if (isset($map['dataProvider'])) {
             $data = $this->getValue($data, $map['dataProvider']);
         }
-        $node = $document->createElement($nodeName);
-        if (isset($map['text'])) {
-            $text = $this->getValue($data, $map['text']);
-            $textNode = $document->createTextNode($text);
-            $node->appendChild($textNode);
+        if ($this->isArray($nodeName)) {
+            $nodeName = substr($nodeName, 0, -2);
+        } else {
+            $data = [$data];
         }
-        if (isset($map['attributes'])) {
-            foreach ($map['attributes'] as $attributeKey => $attributeConfig) {
-                $attributeNode = $this->createAttribute($document, $attributeKey, $attributeConfig, $data);
-                $node->appendChild($attributeNode);
+        foreach ($data as $item) {
+            $node = $document->createElement($nodeName);
+            if (isset($map['text'])) {
+                $text = $this->getValue($item, $map['text']);
+                $textNode = $document->createTextNode($text);
+                $node->appendChild($textNode);
             }
+            if (isset($map['attributes'])) {
+                foreach ($map['attributes'] as $attributeKey => $attributeConfig) {
+                    $attributeNode = $this->createAttribute($document, $attributeKey, $attributeConfig, $item);
+                    $node->appendChild($attributeNode);
+                }
+            }
+            $parentNode->appendChild($node);
         }
-        $parentNode->appendChild($node);
     }
 
     /**

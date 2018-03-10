@@ -149,7 +149,7 @@ XML;
         $map = ['users' => [
             'items' => [
                 'user[]' => [
-                    'data' => 'name'
+                    'text' => 'name'
                 ]
             ]
         ]];
