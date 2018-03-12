@@ -15,15 +15,25 @@ class XmlWriter
     /**
      * @param array $data
      * @param array $map
-     * @return string
+     * @return DomDocument
      */
-    public function toXml(array $data, array $map): string
+    public function toXml(array $data, array $map): DOMDocument
     {
         $document = new DOMDocument();
         foreach ($map as $nodeName => $nodeMap) {
             $this->appendElement($document, $document, $nodeName, $data, $nodeMap);
         }
-        return $document->saveXML();
+        return $document;
+    }
+
+    /**
+     * @param array $data
+     * @param array $map
+     * @return string
+     */
+    public function toXmlString(array $data, array $map): string
+    {
+        return $this->toXml($data, $map)->saveXML();
     }
 
     /**
