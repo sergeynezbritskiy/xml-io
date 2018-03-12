@@ -10,7 +10,7 @@ Library for Parsing xml into php array using easy mapping. It allows you to pars
 ## Installation
 The easiest way to install module is using Composer
 ```
-composer require sergeynezbritskiy/xml-io:^4.0.0
+composer require sergeynezbritskiy/xml-io:^5.0.0
 ```
 ## Simple usage
 The most useful test cases can be seen in tests
@@ -94,7 +94,7 @@ $user = [
 
 and back, convert array to xml
 $xmlWriter = new \SergeyNezbritskiy\XmlIo\XmlWriter();
-$xml = $xmlWriter->toXml($user, 
+$xml = $xmlWriter->toXmlString($user, 
 'user' => [
     'attributes' => ['id'],
     'children' => [

@@ -480,7 +480,7 @@ XML;
     private function assertXmlEquals($map, $expectedResult, $data = 'users')
     {
         $expectedResult = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . $expectedResult;
-        $actualResult = $this->xmlWriter->toXml($this->$data, $map);
+        $actualResult = $this->xmlWriter->toXmlString($this->$data, $map);
         $this->assertXmlStringEqualsXmlString($expectedResult, $actualResult);
     }
 
