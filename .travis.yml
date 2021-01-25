@@ -9,9 +9,8 @@ before_script:
 script: phpunit
 
 php:
-  - 7.0
-  - 7.1
-  - 7.2
+  - 7.4
+  - 8.0
   - master
 
 matrix:

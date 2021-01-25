@@ -10,15 +10,17 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "ext-simplexml": "*"
+        "php": "^7.0|^8.0",
+        "ext-simplexml": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.5"
     },
     "autoload": {
         "psr-4": {
-            "SergeyNezbritskiy\\XmlIo\\": "src/"
+            "SergeyNezbritskiy\\XmlIo\\": "src/",
+            "SergeyNezbritskiy\\XmlIo\\tests\\": "tests/"
         }
     }
 }

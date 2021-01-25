@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace SergeyNezbritskiy\XmlIo;
 
@@ -10,7 +12,6 @@ use SimpleXMLElement;
  */
 class XmlReader extends AbstractCore
 {
-
     /**
      * @param string $xml
      * @param array $map
@@ -82,5 +83,4 @@ class XmlReader extends AbstractCore
         }
         return $xml;
     }
-
 }

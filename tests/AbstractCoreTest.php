@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace SergeyNezbritskiy\XmlIo\tests;
 
@@ -12,7 +14,6 @@ use SergeyNezbritskiy\XmlIo\XmlReader;
  */
 class AbstractCoreTest extends TestCase
 {
-
     /**
      * @var XmlReader
      */

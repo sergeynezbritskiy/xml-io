@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SergeyNezbritskiy\XmlIo;
 
 /**
@@ -8,7 +10,6 @@ namespace SergeyNezbritskiy\XmlIo;
  */
 abstract class AbstractCore
 {
-
     /**
      * This is a key for defining non associative arrays
      * Can be used as in keys as in values
@@ -18,7 +19,7 @@ abstract class AbstractCore
     /**
      * Returns true either $key is array or is string with suffix `[]`
      *
-     * @param string $key
+     * @param array|string $key
      * @return bool
      */
     protected function isArray($key): bool
@@ -52,11 +53,10 @@ abstract class AbstractCore
             $keyParts[0] = null;
         }
         array_walk($keyParts, function (&$key) {
-            if (substr($key, -2) === '[]') {
+            if (is_string($key) && substr($key, -2) === '[]') {
                 $key = substr($key, 0, -2);
             }
         });
         return $keyParts;
     }
-
 }
