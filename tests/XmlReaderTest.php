@@ -120,6 +120,15 @@ class XmlReaderTest extends TestCase
             'addresses as addresses.address[]' => [
                 'city' => 'city',
                 'country' => 'country',
+            ],
+            'cars as cars.car[]' => [
+              'meta_id' => 'meta.@id',
+              'name' => 'name',
+              'optionals as optionals.optional[]' => [
+                'optional_id' => '@id',
+                'name'        => 'name',
+                'version'     => 'version',
+              ]
             ]
         ], [
             'id' => '11235813',
@@ -136,6 +145,35 @@ class XmlReaderTest extends TestCase
             'addresses' => [
                 ['city' => 'Kharkiv', 'country' => 'Ukraine'],
                 ['city' => 'London', 'country' => 'Great Britain'],
+            ],
+            'cars' => [
+              [
+                'meta_id' => '2',
+                'name'    => 'Opel Crossland',
+                'optionals' => [
+                  [
+                    'optional_id' => 'a',
+                    'name'        => 'cruise control',
+                    'version'     => '',
+                  ],
+                  [
+                    'optional_id' => 'b',
+                    'name'        => 'infotaiment',
+                    'version'     => 'V1.0',
+                  ],
+                ]
+              ],
+              [
+                'meta_id' => '',
+                'name'    => 'Opel Tigra',
+                'optionals' => [
+                  [
+                    'optional_id' => '',
+                    'name'        => 'abs',
+                    'version'     => '',
+                  ],
+                ]
+              ]
             ]
         ]);
     }

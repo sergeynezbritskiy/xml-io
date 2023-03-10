@@ -30,16 +30,24 @@ class XmlReader extends AbstractCore
     public function xmlToArray(SimpleXMLElement $xml, $map): array
     {
         $result = [];
+        $mapKeys = array_keys($map);
+        $cursor = -1;
+        $prevXml = false;
         foreach ($map as $arrayKey => $xmlKey) {
+            $cursor++;
 
             list($currentArrayKey, $currentXmlKey) = $this->parseKey($arrayKey);
 
             if ($this->isArray($arrayKey)) {
 
                 $currentArray = [];
+                if($prevXml && isset($mapKeys[$cursor-1]) && strpos($mapKeys[$cursor-1], ' as ') !== false) $xml = $prevXml;
                 $currentNode = $this->getNode($xml, $currentXmlKey);
-                foreach ($currentNode as $xml) {
-                    $currentArray[] = $this->xmlToArray($xml, $xmlKey);
+                $prevXml = $xml;
+                if($currentNode){
+                  foreach ($currentNode as $xml) {
+                      $currentArray[] = $this->xmlToArray($xml, $xmlKey);
+                  }
                 }
                 if ($currentArrayKey === null) {
                     $result = array_merge($result, $currentArray);
@@ -54,7 +62,7 @@ class XmlReader extends AbstractCore
             } elseif ($this->isArray($xmlKey)) {
 
                 $childXml = $this->getNode($xml, $currentXmlKey);
-                $result[$currentArrayKey] = $this->xmlToArray($childXml, $xmlKey);
+                $result[$currentArrayKey] = ($childXml)? $this->xmlToArray($childXml, $xmlKey) : null;
 
             } else {
 
@@ -70,15 +78,16 @@ class XmlReader extends AbstractCore
      * @param string $key
      * @return SimpleXMLElement
      */
-    private function getNode(SimpleXMLElement $xml, string $key): SimpleXMLElement
+    private function getNode(SimpleXMLElement $xml, string $key): ?SimpleXMLElement
     {
         $key = explode('.', $key);
         foreach ($key as $level) {
             if ($this->isAttribute($level)) {
                 $level = substr($level, 1);
-                $xml = $xml[$level];
+                $attributes = ($xml)? $xml->attributes() : false;
+                $xml = ($attributes && $attributes[$level])? $attributes[$level] ?? null : $xml[$level] ?? null;
             } else {
-                $xml = $xml->$level;
+                $xml = $xml->$level ?? null;
             }
         }
         return $xml;

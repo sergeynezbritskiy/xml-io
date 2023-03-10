@@ -23,4 +23,27 @@
             <country>Great Britain</country>
         </address>
     </addresses>
+    <cars>
+        <car>
+            <meta id="2" />
+            <name>Opel Crossland</name>
+            <optionals>
+                <optional id="a">
+                    <name>cruise control</name>
+                </optional>
+                <optional id="b">
+                    <name>infotaiment</name>
+                    <version>V1.0</version>
+                </optional>
+            </optionals>
+        </car>
+        <car>
+            <name>Opel Tigra</name>
+            <optionals>
+                <optional>
+                    <name>abs</name>
+                </optional>
+            </optionals>
+        </car>
+    </cars>
 </user>
